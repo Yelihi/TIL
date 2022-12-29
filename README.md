@@ -12,6 +12,12 @@
 
 <h2 id="프로젝트소개"> :book: 간단한 요약 정리 </h2>
 
-### HTML
+### 링크
 
 [html](https://github.com/Yelihi/TIL-Network/tree/main/Html)
+[CSS](https://github.com/Yelihi/TIL-Network/tree/main/CSS)
+[javascript](https://github.com/Yelihi/TIL-Network/tree/main/javascript)
+[Typescript](https://github.com/Yelihi/TIL-Network/tree/main/typescript)
+[CS](https://github.com/Yelihi/TIL-Network/tree/main/CS)
+[AWS](https://github.com/Yelihi/TIL-Network/tree/main/AWS)
+[FireBase](https://github.com/Yelihi/TIL-Network/tree/main/FireBase)
