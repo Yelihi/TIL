@@ -1,12 +1,10 @@
-
-<h2 align="center"> TIL-Network </h1>
-<h3 align="center"> 틈틈히 네트워크에 대해 정리해보자 </h3> 
+<h2 align="center"> TIL </h1>
+<h3 align="center"> 매일 공부한 부분을 간략하게 정리하자 </h3> 
 <br />
 
 <h2 id="프로젝트소개"> :book: 시작일 </h2>
 
-- 2022.12.10
-
+- 2023.1.1
 
   <br />
 
@@ -14,4 +12,6 @@
 
 <h2 id="프로젝트소개"> :book: 간단한 요약 정리 </h2>
 
-### 네트워크
+### HTML
+
+[html]("./HTML/README.md")
