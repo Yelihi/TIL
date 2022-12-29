@@ -14,4 +14,4 @@
 
 ### HTML
 
-[html]("./HTML/README.md")
+[html]("https://github.com/Yelihi/TIL-Network/tree/main/Html")
