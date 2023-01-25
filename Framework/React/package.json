@@ -1,0 +1,17 @@
+{
+  "name": "react-start",
+  "version": "1.0.0",
+  "description": "리엑트를 한번 구현해보자",
+  "main": "index.js",
+  "scripts": {
+    "build": "babel src -d build -w",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yelihi",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/cli": "^7.20.7",
+    "@babel/core": "^7.20.12",
+    "@babel/preset-react": "^7.18.6"
+  }
+}
