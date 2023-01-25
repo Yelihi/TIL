@@ -279,3 +279,120 @@ export function createElement(tagName, props, ...children) {
 - 그렇기에 특정 함수의 상태값을 변경할 수있고 저장해놓을 수 있다.
 - 이러한 특징에서 알 수 있듯이 hook 은 반드시 함수형 컴포넌트 내에서 사용하도록 하고 있다.
 - 아니면 인덱스가 꼬여버릴 수 있다.
+
+<p>인덱스가 꼬인다는게 햇갈릴 수 있다. 물론 지금도 좀 햇갈리는데, 중요한 점은 다음과 같다</p>
+
+- 함수 컴포넌트가 실행되어 랜더링 되는것은 첫번째던지 두번째던지 동일한 순서와 갯수라 가정한다
+- 즉, 어떠한 로직이 아닌(조건문이나 반복문) 필요에 의한 개발자의 직접적인 수정은 첫 랜더링이라 생각
+- 상태값의 변동으로 인한 재 랜더링의 경우만이 이후 랜더링이라 판단
+
+<p>함수 컴포넌트 마다 들어있는 useState 에 대해 외부 배열을 통해 hook 과 state 를 기억할 수 있었다. 즉, 같은 useState에 같은 state 명이라 할지라도 함수컴포넌트마다 독립성이 유지되는데, 그 이유는 외부 배열에서 currentComponent 인덱스를 통해 함수구별이 가능하기 때문이다. 이와 마찮가지로 같은 함수컴포넌트 내 여러개의 hook 에 대해서도 비슷한 작용이 이루어진다. 즉, 같은 컴포넌트 내 hook 의 구별 역시 외부 배열 속 인덱스로 순차적으로 랜더링을 진행하면서 상태값을 해석한다고 생각하면 된다.</p>
+
+```js
+let state = [];
+let setters = [];
+let firstRun = true;
+let cursor = 0;
+
+function createSetter(cursor) {
+  return function setterWithCursor(newVal) {
+    state[cursor] = newVal;
+  };
+}
+
+// 앞에서 구현해본 useState 와 비슷하다.
+export function useState(initVal) {
+  if (firstRun) {
+    state.push(initVal);
+    setters.push(createSetter(cursor));
+    firstRun = false;
+  }
+
+  // 함수를 전달
+  const setter = setters[cursor];
+  const value = state[cursor];
+
+  cursor++;
+  return [value, setter];
+}
+
+// Our component code that uses hooks
+function RenderFunctionComponent() {
+  const [firstName, setFirstName] = useState("Rudi"); // cursor: 0
+  const [lastName, setLastName] = useState("Yardley"); // cursor: 1
+
+  return (
+    <div>
+      <Button onClick={() => setFirstName("Richard")}>Richard</Button>
+      <Button onClick={() => setFirstName("Fred")}>Fred</Button>
+    </div>
+  );
+}
+
+function MyComponent() {
+  cursor = 0; // 리셋
+  return <RenderFunctionComponent />; // render
+}
+
+console.log(state); // Pre-render: []
+MyComponent();
+console.log(state); // First-render: ['Rudi', 'Yardley']
+MyComponent();
+console.log(state); // Subsequent-render: ['Rudi', 'Yardley']
+
+// 버튼 클릭
+
+console.log(state); // After-click: ['Fred', 'Yardley']
+```
+
+- 코드가 제대로 작동하지는 않을 수 있으나 수도코드 목적으로 참고하자.
+- 여기서 알고자 하는 원리는 결국 각 훅들의 상태값과 setter 함수 역시 각각의 외부 배열에 저장되면서
+- 랜더링마다 순차적으로 읽힌다는 점이다.
+- 즉 firstName -> lastName 순으로 배열의 인덱스대로 상태값을 가져온다.
+- firstName = state[0], lastName = state[1]
+- 이렇기 때문에 사실 같은 hook 을 여러번 사용해도 각각의 상태를 구별할 수 있다.
+- 이렇기 떄문에 react 에서 권장하는 방식을 쓰지 않는다면, 상태값을 불러오는데 문제가 발생할 수 있다.
+
+```js
+if (customValue) useHook();
+
+// or
+for (let i = 0; i < customValue; i++) useHook();
+
+// or
+if (customValue) return;
+useHook();
+```
+
+- 위의 경우를 react 는 하지 말라고 권고하며, 실제로 eslint 에서 자동적으로 에러가 발생하도록 설정하고 있다.
+- 만약 hook 의 순서를 바꾸면 어떻게 될까
+
+```js
+let firstRender = true;
+
+function RenderFunctionComponent() {
+  if (firstRender) {
+    [initialName] = useState("Ruu"); // cursur = 0
+    firstRender = false;
+  }
+
+  const [firstName, setFirstName] = useState("Rudi"); // cursur = 1
+  const [lastName, setLastName] = useState("Yardley"); // cursur = 2
+
+  return (
+    <div>
+      <Button onClick={() => setFirstName("Richard")}>Richard</Button>
+      <Button onClick={() => setFirstName("Fred")}>Fred</Button>
+    </div>
+  );
+}
+```
+
+- 처음 렌더링이 진행되다면, state[0] = initialName = 'Ruu' 가 들어가면서 이후 순차적으로 다른 상태값들도 들어가게 된다
+- 하지만 버튼을 클릭하여 firstName = "Richard" 로 변경을 진행한다고 하면
+- 다시 함수가 리랜더링 된다
+- 이때 조건문에 들어가있던 useState 는 발동하지않게 되고, 원래 있어야 할 state[0] 을 initialName 이 아니라 firstName 이 받게 된다.
+- 이후 firstName 을 lastName 이 받게 되는 듯이 순서가 바뀌어 버린다.
+- 즉, 올바른 이전 상태값을 가리키지 않는다. (실제로 리엑트에서는 이미 에러가 떳을 것이다.)
+
+<p>결론을 요약하자면, 리엑트의 함수 컴포넌트에서 이전 상태값을 저장할 수 있는 방법인 hook 의 등장으로 기존 클래스 컴포넌트에서 더 직관적이고 가독성이 좋은 함수 컴포넌트로의 이동이 활발해졌다. 이러한 hook 의 상태 저장 원리는 외부 배열의 인덱스를 이용하는것이었고, 그렇기에 리엑트내에서 말하는 hook 의 규칙을 잘 지키도록 해야한다.</p>
