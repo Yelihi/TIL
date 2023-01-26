@@ -8,6 +8,7 @@
 - [2023.1.18](#2023-1-18)
 - [2023.1.21](#2023-1-21)
 - [2023.1.22](#2023-1-22)
+- [2023.1.26](#2023-1-26)
 
   <br />
 
@@ -480,3 +481,147 @@ message body
 - 보통 용량이 엄청 큰 이미지를 요청한다고 할 때, 이러한 데이터를 계속해서 요청해서 다운 받아오기에는 속도가 손해일테니, 데이터를 캐시화한다. 웹브라우저에서 한다
 - GET, HEAD, POST, PATCH 는 가능하다.
 - 다만 실제로는 GET, HEAD 를 사용한다. url 을 key 로 잡고 캐시화가 가능하기 떄문이다. body 까지 key 로 작업하기에는 어렵기 떄문.
+
+## 2023-1-26
+
+### HTTP 메서드 활용
+
+> **클라이언트에서 서버로 데이터 전송**
+
+- 쿼리 파라미터를 통해 데이터를 전송
+  - GET
+  - 주로 정렬 필터(검색어)
+- 메시지 바디를 통한 데이터 전송
+  - POST, PUT, PATCH
+  - 회원 가입, 상품 주문, 리소스 등록, 리소스 변경
+
+> **정적 데이터를 조회**
+
+<p>정적 데이터를 조회하는 것은 쿼리파라미터가 필요없이 간단하게 리소스 만으로 조회가 가능하다</p>
+
+- 이미지, 정적 텍스트 문서
+- 조회는 GET 사용
+- 정적 데이터는 일반적으로 쿼리 파라미터 없이 리소스 경로로 단순하게 조회 가능
+
+> **동적 데이터 조회**
+
+<p>검색어나 페이지네이션 등 추가 데이터를 전달해야할 때 쿼리파라미터를 사용. 서버에서는 이 쿼리파라미터를 꺼낼 수 있다.</p>
+
+- 주로 검색, 게시판 목록에서 정렬 필터(검색어)
+- 조회 조건을 줄여주는 필터, 조회 결과를 정렬하는 정렬 조건에 주로 사용
+- 조회는 GET 사용
+- GET 은 쿼리파라미터를 사용해서 데이터를 전달
+
+> **HTML Form 데이터 전송**
+
+<p>태그 중에 form 태그가 있는데, 이걸 활용해서 데이터를 전송할 수 있다.</p>
+
+```js
+<form action="/save" method="post">
+  <input type='text' name='username'>
+  <input type='text' name='age'>
+  <button type="submit">전송<button>
+</form>
+```
+
+- 이런 형식이 있다고 하면, 여기서 전송을 누를 시 HTTP 메시지가 생성이 된다.
+
+```
+POST /save HTTP/1.1
+Host: localhost:8080
+Content-Type: application/x-www-form-urlencoded
+
+username=kim&age=20
+```
+
+- 이런식으로 메시지가 전송이 된다. 만약 메서드가 GET 이라면
+
+```
+GET /save?username=kim&age=20 HTTP/1.1
+Host: localhost:8080
+```
+
+- 이렇게 주소가 쿼리파라미터로 변경이 된다.
+- 다만 주의할점은 Get 은 조회에만 사용해야한다. 데이터를 변경시키는 것을 하면 안된다.
+- 위 예시는 save 니깐 사실 잘못된 예제
+
+> **HTML Multi/Part Form-Data**
+
+<p>이미지를 같이 전송할 때처럼, 여러 데이터 타입을 같이 보낼 수 있다.</p>
+
+- 파일 업로드 같은 바이너리 데이터 전송시 사용
+- 다른 종료의 여러 파일과 폼의 내용 함께 전송 가능(그래서 이름이 multipart)
+
+### HTTP API 데이터 전송
+
+```
+POST /members HTTP/1.1
+Content-Type: application/json
+
+{
+  usernama: kim
+  age: 20
+}
+
+```
+
+- 클라이언트 쪽의 라이브러리는 이를 자동적으로 잘 만들어준다.
+- API 데이터 전송은 서버끼리의 통신에서 자주 사용되며, 웹 클라이언트의 경우도 자바스크립트의 AJAX 를 통해서 API 통신을 주로 한다.
+- 기존에 활용했던 메서드를 그대로 활용할 수 있다. (POST, PATCH, PUT, GET)
+- Content-Type: application/json 을 주로 사용(사실상 표준)
+- 예전에는 XML 을 많이 사용했지만 최근에는 더 심플한 json 을 사용한다.
+
+### HTTP API 설계 예시
+
+<p>개략적으로 종류를 살펴보자</p>
+
+- HTTP API - 컬렉션
+  - POST 기반 등록
+  - 예) 회원관리 API 제공
+- HTTP API - 스토어
+  - PUT 기반 등록
+  - 예) 정적 컨텐츠 관리, 원격 파일 관리
+- HTML FORM 사용
+  - 웹 페이지 회원 관리
+  - GET, POST 만 사용 가능
+
+> **회원 관리 시스템을 설계한다 가정**
+
+- 회원 목록 : GET /members
+- 회원 등록 : POST /members
+- 회원 조회 : GET /members/{id}
+- 회원 수정 : PATCH,PUT,POST /members/{id}
+- 회원 삭제 : DELETE /members/{id}
+
+<p>여기서 post 를 통해 어떠한 회원을 등록시킨다고 가정해보자. post 로 회원을 등록시킬 때 클라이언트에서는 이 회원에 대한 등록될 리소스 URI 를 알 수 없다. API 를 통해 데이터를 전송시킬 뿐. 그렇다면 이 회원이 100번째 회원이라면, 그래서 클라이언트에서 이 회원을 조회하고 싶으면 이에 맞는 특정 URI 를 작성해야할텐데, 이러한 URI 는 서버에서 생성해준다. 이러한 특성을 컬렉션이라 한다.</p>
+
+> **파일 관리 시스템 가정**
+
+- 파일 목록 : GET /files
+- 파일 조회 : GET /files/{filename}
+- 파일 등록 : PUT /files/{filename}
+- 파일 삭제 : DELETE /files/{filename}
+- 파일 대량 등록 : POST /files
+
+<p>특징이 있다. post 와 다르게 put 은 클라이언트가 리소스 URI 를 알고 있어야 한다. 즉, 클라이언트가 직접 URI 를 지정해야한다. 클라이언트가 직접 URI를 관리한다. 이러한 스타일의 관리를 스토어(Store) 라고 한다.</p><br />
+
+<p>대부분은 post 를 사용한다는 점을 알고 있자. 즉 컬렉션 기반이다.</p>
+
+> **HTML FORM 사용**
+
+- HTML FORM 은 GET, POST 만 지원을 한다.
+- AJAX 같은 기술을 사용해서 해결이 가능
+- 하지만 일단은 HTML FORM 만 사용한다고 가정하자.
+- GET, POST 만으로는 제약이 있어서 컨트롤 URI 를 사용해야한다.
+- /new, /edit, /delete 가 컨트롤 URI (동사를 사용한다)
+- HTTP 메서드로 해결하기 애매한 경우 사용하게 된다(HTTP API 포함)
+- 단 최대한 기존 메서드를 활용해야 한다.
+  <br />
+
+- 회원 목록 : GET /members
+- 회원 등록 폼 : GET /members/new
+- 회원 등록 : POST /members/new
+- 회원 조회 : GET /members/{id}
+- 회원 수정 폼 : GET /members/{id}/edit
+- 회원 수정 : POST /members/{id}/edit
+- 회원 삭제 : POST /members/{id}/delete
