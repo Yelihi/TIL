@@ -5,6 +5,7 @@
 <h2 id="프로젝트소개"> :book: 작성일 기록 </h2>
 
 - [2023.1.12](##2023-1-12)
+- [2023.1.30](#2023-1-30)
 
   <br />
 
@@ -188,3 +189,116 @@ const Button = styled.button<{ color: string }>`
 
 - color 라는 새로운 props 전달값을 생성
 - 이에 대한 type 을 설정해주고, 다음 color 설정에 따라 색상을 변경
+
+## 2023-1-30
+
+### Typescript 에서 media query 셋팅해보기
+
+<p>여러가지 방안을 생각하고, 구현도 해봤지만 현재 구현한 방식이 가장 편리하기도 하고, DefaultTheme 를 손쉽게 사용할 수 있었다.</p>
+
+```ts
+const customMediaQuery = (minWidth: number) => `@media screen and (min-width: ${minWidth}px)`;
+export const media = {
+  custom: customMediaQuery,
+  desktop: customMediaQuery(1024),
+  tablet: customMediaQuery(786),
+  phone: customMediaQuery(320),
+};
+```
+
+- 사실 그냥 매번 @media and screen ... 을 치는것을 좀 줄여주는 역할이다
+- 함수 customMediaQuery 를 통해 인자로 각 디바이스별 사이즈를 넘겨준다
+- 이후 media 객체를 통해서, 함수 실행 결과를 value 값으로 import 해주면 된다.
+
+```ts
+import { media } from "../../styles/media";
+
+// 생략
+
+const ListContainer = styled.div`
+  width: 100%;
+  height: fit-content;
+  ${media.tablet} {
+    position: sticky;
+    position: -webkit-sticky;
+    top: -1px;
+    background-color: ${({ theme }) => theme.colors.white};
+  }
+`;
+```
+
+- 이런식으로 반응형을 할 수 있고, 기존 DefaultTheme 를 사용하기 편리하다.
+
+### styled-component 에 props 전달하기
+
+<p>styled-component 를 사용하다보면 자주 props 를 전달해야하는 상황이 오는데, 조건에 따라 스타일을 다르게 적용하고자 할 떄 주로 사용한다. 처음에는 사용법이 어색하지만, 익숙해지면 정말 유용한 기능이니 예시를 정리하겠다</p>
+
+```ts
+import styled, { css } from 'styled-components'
+
+// 생략
+<ListBox key={i} direction={true} onClick={onClickDrop}>
+// 생략
+const ListBox = styled.div<{ direction: boolean }>`
+  font-weight: ${({ theme }) => theme.fontWeight.Regular};
+  overflow: hidden;
+  ${props =>
+    props.direction
+      ? css`
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: flex-start;
+        `
+      : css`
+          display: flex;
+          justify-content: flex-start;
+          align-items: center;
+        `}
+`;
+
+```
+
+- props 를 자신이 정하고 싶은 네이밍으로 정한다음 내려주도록 하자
+- typescript 는 내려주는 props 에 대해 타입을 지정해주어야 한다.
+- styled-component 의 최신 버전은 css 를 import 해주어서 사용하는것을 권장한다.
+- 위 코드처럼 조건식에 따라 스타일을 지정할 수 있다.
+
+### keyframe
+
+<p>styled-component 에서 transition 을 구현하려면 keyframe 을 활용해야한다. 사실 이 부분때문에 그냥 scss 가 더 좋지 않을까 싶긴 했는데, 앞으로도 styled-component 는 자주 사용하게 될 것 같으니, 한번 더 정리하는게 좋겠다 싶었다.</p>
+
+```ts
+import styled, { keyframes } from "styled-components";
+
+export const clickDropToggle = keyframes`
+  from{
+    height: 0;
+    opacity: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  to{
+    height: 38px;
+    opacity: 1;
+    padding-top: 9px;
+    padding-bottom: 9px;
+  }
+`;
+```
+
+- 하나의 예시로 메뉴의 dropdown 을 설계할 때, 자연스럽게 높이가 조정되도록 애니매이션을 설계하였다.
+- 사용 방법은 css 의 animation과 동일하다. 그저 keyframe 으로 통제한다고 생각하자
+- 이렇게 animation 을 만들어 놓고 이 이름을 통해 직접 animation 으로 가져와서 사용하자
+
+```ts
+  ${props =>
+    props.clickDrop === 'on' &&
+    css`
+      animation: ${clickDropToggle} 0.7s forwards;
+    `}
+
+```
+
+- props 를 통해 조건식으로서 애니매이션을 적용할 수 있다.
+- 설정하는 방식은 기존 css animation 과 같다.
