@@ -1,4 +1,4 @@
-import { createStore } from "./redux/js";
+import { createStore } from "./redux.js";
 
 // 리덕스 안 state 를 수정해야한다.
 // 문제는 state 는 undefined 이며 data 는 객체이다.
@@ -7,6 +7,8 @@ import { createStore } from "./redux/js";
 // 근데 state 를 객체로 해도 안되던데...
 
 // 미들웨어는 커링이라는 개념을 사용한다.
+
+const ADD_COUNTER = "ADD_COUNTER";
 
 const middleware1 = (store) => (dispatch) => (action) => {
   console.log("mid1");
