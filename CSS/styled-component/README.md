@@ -266,7 +266,7 @@ const ListBox = styled.div<{ direction: boolean }>`
 
 ### keyframe
 
-<p>styled-component 에서 transition 을 구현하려면 keyframe 을 활용해야한다. 사실 이 부분때문에 그냥 scss 가 더 좋지 않을까 싶긴 했는데, 앞으로도 styled-component 는 자주 사용하게 될 것 같으니, 한번 더 정리하는게 좋겠다 싶었다.</p>
+<p>styled-component 에서 경험삼아 keyframe 을 활용해야한다. 앞으로도 styled-component 는 자주 사용하게 될 것 같으니, 한번 더 정리하는게 좋겠다 싶었다.</p>
 
 ```ts
 import styled, { keyframes } from "styled-components";
