@@ -5,6 +5,7 @@
 <h2 id="프로젝트소개"> :book: 작성일 기록 </h2>
 
 - [2023.1.26](#2023-1-26)
+- [2023.2.21](#2023-2-21)
 
   <br />
 
@@ -312,3 +313,27 @@ export function createStore(reducer, middleware = []) {
 ```
 
 - 좀 더 이해가 필요해서 공식문서를 참고하고 다시 정리해보겠다.
+
+## 2023-2-21
+
+### redux의 middleware 에 의해 새로 생성된 action 은 next(action)에서 전달된 action과 동일한가?
+
+<p>반드시 그러한 것은 아니다. 미들웨어는 여러개가 존재할 수 있다. 리덕스에서 미들웨어를 사용한다는 것은 action -> dispatch 되기 전 사이에서 작용하며, 이로인해 미들웨어에서 새로 action 이 생성되어 다음 미들웨어로 전달되는 형식이다.</p><br />
+
+<p>예를 들어서 미들웨어가 1,2,3 개 있다고 가정한다면, 만약 1에서는 조건에 해당하지 않아 아무런 처리를 하지않으면 그대로 2로 action 이 전달된다. 그리고 2에서 조건에 해당하여 새롭게 newAction 이 생성이 되면 이 newAction 이 3으로 전달이 된다. 이런식으로 최종적으로 dispatch 된다고 할 수 있다.</p><br />
+
+```js
+const myMiddleware = (store) => (next) => (action) => {
+  if (action.type === "LOAD_DATA") {
+    // 비동기 작업 수행 후, 새로운 액션 객체를 생성합니다.
+    const newData = { id: 1, name: "John Doe" };
+    const newAction = { type: "DATA_LOADED", payload: newData };
+
+    // 새로운 액션 객체를 다음 미들웨어나 리듀서에게 전달합니다.
+    return next(newAction);
+  } else {
+    // 그 외의 경우에는 다음 미들웨어나 리듀서에게 기존 액션 객체를 그대로 전달합니다.
+    return next(action);
+  }
+};
+```
