@@ -125,3 +125,6 @@ function solution(priorities, location) {
     }
   }
 }
+
+
+
