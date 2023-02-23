@@ -1,4 +1,4 @@
-<h2 align="center"> Network </h1>
+<h2 align="center"> Computer </h1>
 <h3 align="center"> 매일 공부한 부분을 간략하게 정리하자 </h3> 
 <br />
 

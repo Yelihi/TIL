@@ -542,3 +542,47 @@ class binarySearchTree {
 // 깊이우선 탐색 - DFS
 // 최대한 깊은 정점부터 탐색하는 알고리즘
 // stack 을 이용하여 구현할 수 있다.
+
+// 그리디 알고리즘
+// 매 선택에서 지금 이 순간 가장 최적인 답을 선택하는 알고리즘
+// 최적해를 보장해주진 않는다
+
+// 보통 최적해를 구하는 알고리즘보다 빠른 경우가 많다
+// 크루스칼, 다익스트라 알고리즘에 사용된다
+// 직관적인 문제에 사용된다
+// 되게 동전 반환 문제들이 예시다.
+
+// 그리디 문제의 특징은 직관적이며 숫자가 크다
+
+// 소수 구하기 O(sqrt(n));
+
+function is_prime(num) {
+  for (let i = 2; i * i <= num; i += 1) {
+    if (num % i == 0) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// 에라토스테네스의 체
+// 2부터 54 중 소수를 구하기
+
+// 가장 먼저 2를 선택한다. 그리고 2의 배수를 선택한다.
+// 그 다음 3을 선택하고, 3의 배수수를 선택한다.
+// 5를 선택하고 5의 배수를 선택한다.
+
+function get_primes(num) {
+  const prime = [false, false, ...Array(num - 1).fill(true)];
+
+  for (let i = 2; i * i <= num; i += 1) {
+    if (prime[i]) {
+      for (let j = i * 2; j <= num; j += 1) {
+        prime[j] = false;
+      }
+    }
+  }
+
+  return prime.filter(boolean);
+}
