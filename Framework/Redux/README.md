@@ -268,7 +268,7 @@ function(action){(function(action){dispatch(action)})(action)}
 
 ```
 
-- 복잡하긴 하지만, 이러한 과정을 몽키디스패치 라고 한다. 이것을 구현하려면 아래처럼 해야한다
+- 복잡하긴 하지만, 이러한 과정을 몽키스패치 라고 한다. 이것을 구현하려면 아래처럼 해야한다
 
 ```js
 export function createStore(reducer, middleware = []) {

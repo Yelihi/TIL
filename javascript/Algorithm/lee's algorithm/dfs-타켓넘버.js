@@ -42,6 +42,8 @@ class binarySearchTree {
       return this;
     } else {
       let current = this.root;
+      // 후방순회
+      // 왜냐면 트리 마지막에 삽입해야하기 때문에
       function traverse(node) {
         if (node.left) traverse(node.left);
         if (node.right) traverse(node.right);
@@ -61,6 +63,8 @@ class binarySearchTree {
     let count = 0;
     let data = 0;
     let current = this.root;
+    // 전방 순회
+    // 처음 트리를 탈 때부터 노드의 값을 데이터에 저장해야한다.
     function traverse(node) {
       data = data + node.value;
       if (node.left) traverse(node.left);

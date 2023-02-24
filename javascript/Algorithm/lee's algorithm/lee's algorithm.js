@@ -586,3 +586,132 @@ function get_primes(num) {
 
   return prime.filter(boolean);
 }
+
+// 재귀함수
+// 재귀는 자기 자신을 호출하는 함수
+// 자바스크립트에서는 콜스택에 제한이 있다. 크롬에 한해 약 1만개 정도 돌아간다
+// 성능 개선을 위한 꼬리 재귀가 제공되지 않는다
+// 자바스크립트에서도 재귀는 성능이 좋지 않다.
+
+// 그럼에도 재귀로 작성하면 더 쉽게 코딩테스트 문제가 있기 때문이다.
+// (Union-Find, DFS, Backtraking)
+
+function recursion(n) {
+  // 기저조건
+  if (n > 10) {
+    return n;
+  }
+  return recursion(n + 1);
+}
+
+// 피보나치 수열
+// 여기서 n 은 항 번호다.
+function fibonacc(n) {
+  if (n <= 2) {
+    return 1;
+  }
+
+  return fibonacc(n - 2) + fibonacc(n - 1);
+}
+
+// 합병 정렬
+const merge = (a, b) => {
+  if (a.length === 0) return b;
+  else if (b.length === 0) return a;
+  else if (a[0] < b[0]) return [a[0], ...merge(a.slice(1), b)];
+  else return [b[0], ...merge(a, b.slice(1))];
+};
+
+const mergesort = (arr) => {
+  if (arr.length < 2) return arr;
+  else {
+    const mid = Math.floor(arr.length / 2);
+    return merge(mergesort(arr.slice(0, mid)), mergesort(arr.slice(mid)));
+  }
+};
+
+// 전방 순회, 중위 순회, 후방 순회
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.left = null;
+    this.right = null;
+  }
+}
+
+class Tree {
+  constructor() {
+    this.root = node;
+  }
+
+  preorder(currentNode) {
+    console.log(currentNode.value);
+    if (currentNode.left) this.preorder(currentNode.left);
+    if (currentNode.right) this.preorder(currentNode.right);
+  }
+
+  inorder(currentNode) {
+    if (currentNode.left) this.ineorder(currentNode.left);
+    console.log(currentNode.value);
+    if (currentNode.right) this.ineorder(currentNode.right);
+  }
+
+  postorder(currentNode) {
+    if (currentNode.left) this.postorder(currentNode.left);
+    if (currentNode.right) this.postorder(currentNode.right);
+    console.log(currentNode.value);
+  }
+}
+
+// 순열 조합
+// 자바스크립트에서는 이를 직접 구현해야한다
+
+// 순열과 조헙으로 푸는 문제라면 n 이 크게 나오지 않는다
+// 반대로 n 이 크다면 이게 순열과 조합이 아닐수 있음을 인정하자
+
+// 순열
+// 시간복잡도 O(n!)
+function permutation(arr, n) {
+  // 1개만 뽑는다면 그대로 순열을 반환한다. 탈출 조건으로 사용된다.
+  if (n === 1) return arr.map((v) => [v]);
+  let result = [];
+
+  // 요소를 순환한다
+  arr.forEach((fixed, idx, arr) => {
+    // 현재 index를 제외한 요소를 추출한다.
+    // index번째는 선택된 요소
+    const rest = arr.filter((_, index) => index !== idx);
+    // 선택된 요소를 제외하고 재귀 호출한다
+    const perms = permutation(rest, n - 1);
+    // 선택된 요소와 제귀 호출을 통해 구한 순열을 합쳐준다.
+    const combine = perms.map((v) => [fixed, ...v]);
+    // 결과값을 추가한다.
+    result.push(...combine);
+  });
+
+  return result;
+}
+
+// 조합
+// 시간복잡도 O(2^n)
+
+function combinations(arr, n) {
+  // 1개만 뽑는다면 그대로 조합을 반환한다. 탈출 조건으로도 사용된다.
+  if (n === 1) return arr.map((v) => [v]);
+  let result = [];
+
+  // 요소를 순환한다
+  arr.forEach((fixed, idx, arr) => {
+    // 현재 index 이후 요소를 추출한다
+    // index번째는 선택된 요소
+    const rest = arr.slice(idx + 1);
+    // 선택된 요소 이전 요소들을 제외하고 재귀 호출한다
+    const combis = combinations(rest, n - 1);
+    // 선택된 요소와 재귀 호출을 통해 구한 조합을 합쳐준다
+    const combine = combis.map((v) => [fixed, ...v]);
+    // 결과값에 추가한다
+    result.push(...combine);
+  });
+
+  return result;
+}
