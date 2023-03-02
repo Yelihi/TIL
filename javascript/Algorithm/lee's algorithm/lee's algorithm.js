@@ -543,6 +543,36 @@ class binarySearchTree {
 // 최대한 깊은 정점부터 탐색하는 알고리즘
 // stack 을 이용하여 구현할 수 있다.
 
+function dfs(graph, distance, check, src, count) {
+  for (const dest of graph[src]) {
+    if (distance[dest] > count + 1 && !check[dest]) {
+      check[dest] = true;
+      distance[dest] = count + 1;
+      dfs(graph, distance, check, dest, count + 1);
+      check[dest] = false;
+    }
+  }
+}
+
+function solution(n, edge) {
+  const graph = Array.from(Array(n + 1), () => []);
+
+  for (const [src, dest] of edge) {
+    graph[src].push(dest);
+    graph[dest].push(src);
+  }
+
+  const check = Array(n + 1).fill(false);
+  const distance = Array(n + 1).fill(20001);
+
+  check[1] = true;
+  distance[1] = 1;
+  dfs(graph, distance, check, 1, 1);
+
+  const max = Math.max(...distance.slice(1));
+  return distance.filter((item) => item === max).length;
+}
+
 // 그리디 알고리즘
 // 매 선택에서 지금 이 순간 가장 최적인 답을 선택하는 알고리즘
 // 최적해를 보장해주진 않는다
@@ -730,4 +760,86 @@ function combinations(arr, n) {
  * 이미 방문한 정점과 무한인 정점을 제외하고 가장 최단 거리인 정점을 선택한다
  * 더이상 방문할 수 있는 정점이 없을 때 까지 3~5를 반복한다
  * 도착점의 값을 확인한다
+ */
+
+class MinHeap {
+  constructor() {
+    this.heap = [null];
+  }
+
+  push(value) {
+    this.heap.push(value);
+    let currentIndex = this.heap.length - 1;
+    let parentIndex = Math.floor(currentIndex / 2);
+
+    while (parentIndex !== 0 && this.heap[parentIndex] > value) {
+      this._swap(parentIndex, currentIndex);
+      currentIndex = parentIndex;
+      parentIndex = Math.floor(currentIndex / 2);
+    }
+  }
+
+  pop() {
+    if (this.isEmpty()) return;
+    if (this.heap.length === 2) return this.heap.pop();
+
+    let returnValue = this.heap[1];
+    this.heap[1] = this.heap.pop();
+
+    let currentIndex = 1;
+    let leftIndex = 2;
+    let rightIndex = 3;
+
+    while ((this.heap[leftIndex] && this.heap[currentIndex] > this.heap[leftIndex]) || (this.heap[rightIndex] && this.heap[currentIndex] > this.heap[rightIndex])) {
+      if (this.heap[leftIndex] === undefined) {
+        this._swap(rightIndex, currentIndex);
+      } else if (this.heap[rightIndex] === undefined) {
+        this._swap(leftIndex, currentIndex);
+      } else if (this.heap[leftIndex] > this.heap[rightIndex]) {
+        this._swap(rightIndex, currentIndex);
+      } else if (this.heap[rightIndex] > this.heap[leftIndex]) {
+        this._swap(leftIndex, currentIndex);
+      }
+
+      leftIndex = currentIndex * 2;
+      rightIndex = currentIndex * 2 + 1;
+    }
+    return returnValue;
+  }
+
+  _swap(a, b) {
+    [this.heap[a], this.heap[b]] = [this.heap[b], this.heap[a]];
+  }
+
+  isEmpty() {
+    return this.heap.length === 1;
+  }
+}
+
+/**
+ * 최소신장
+ * 신장 트리란 그래프 내에 모든 정점을 포함하는 최소 연결 부분 그래프
+ * 최소 신장 트리(MST)는 다음과 같은 조건을 만족해야 한다
+ * - 최소한의 간선으로 모든 정점이 연결되어야 한다
+ * 모든 신장 트리 중 가중치의 값이 최소여야 한다
+ * Cycle 이 발생해서는 안된다
+ *
+ * 크루스칼 알고리즘
+ * 그리디 개념을 이용하여 구현할 수 있다
+ * 먼저 모든 그래프를 부분 집합으로 분리한다
+ * 가장 가중치가 낮은 간선을 선택하고 부분집합을 연겨랗ㄴ다
+ * 이때 Cycle 이 발생하지 않도록 주의한다
+ * - 공통 최상위 부모를 찾는 것으로 막을 수 있다
+ * - cycle을 판단하기 위한 알고리즘으로 Union-find 알고리즘을 통해 알 수 있다
+ *
+ * Union-find 알고리즘
+ * 서로소 집합을 구하기 위한 알고리즘
+ * - 서로소 집합은 공통 원소가 없는 두 집합을 표현하기 위한 자료구조
+ * 서로 다른 두 집합을 병합하는 연산 Union과 집합의 원소가 어떤 집합에 속해 있는지 판단하는 연산 find 를 나타낸다.
+ * 보통 트리 구조로 구성한다
+ * 편의상 재귀로 구현하는 경우가 많다.
+ *
+ * 가장 가중치가 낮은 간선부터 선택 = 그리디
+ * 각 원소가 같은 집합인지 확인하기 위한 알고리즘 = Union-find
+ * 두 정점이 같은 집합에 속한다면 = Cycle
  */
