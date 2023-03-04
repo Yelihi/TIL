@@ -51,3 +51,5 @@ store.subscribe(listener);
 store.dispatch(actionCreator(ADD_COUNTER, { count: 2 }));
 
 // 이제 바뀐 state 를 받고 싶다.
+
+// 완성코드
