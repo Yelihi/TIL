@@ -5,6 +5,7 @@
 <h2 id="프로젝트소개"> :book: 작성일 기록 </h2>
 
 - [2023.1.25](#2023-1-25)
+- [2023.3.10](#2023-3-10)
 
   <br />
 
@@ -396,3 +397,30 @@ function RenderFunctionComponent() {
 - 즉, 올바른 이전 상태값을 가리키지 않는다. (실제로 리엑트에서는 이미 에러가 떳을 것이다.)
 
 <p>결론을 요약하자면, 리엑트의 함수 컴포넌트에서 이전 상태값을 저장할 수 있는 방법인 hook 의 등장으로 기존 클래스 컴포넌트에서 더 직관적이고 가독성이 좋은 함수 컴포넌트로의 이동이 활발해졌다. 이러한 hook 의 상태 저장 원리는 외부 배열의 인덱스를 이용하는것이었고, 그렇기에 리엑트내에서 말하는 hook 의 규칙을 잘 지키도록 해야한다.</p>
+
+## 2023-3-10
+
+### useConfirm 커스텀 훅
+
+<p>버튼 이벤트 발동 시 사용자에게 한번 더 확인을 해야할 때가 있다. 예를 들면 데이터를 삭제하려고 한다면, 한번 더 삭제 여부를 물어봐야 하는 것이다. 실수로 삭제버튼을 그냥 눌러버릴 수 있으니 말이다. 커스텀한 알림창을 사용하는 것이라면 따로 component 를 랜더링 하고, 그 다음 확인과 취소버튼에 실제 이벤트를 발동시키면 되겠지만, 간단하게 알림창을 뛰우고 싶다면 window.confirm(message) 를 조건식으로 활용하면 된다.</p>
+
+```ts
+import React, { useCallback } from "react";
+
+const useConfirm = (description: string, onSubmit: () => void, onCencel: () => void) => {
+  const confirm = useCallback(() => {
+    if (window.confirm(description)) {
+      onSubmit();
+    } else {
+      onCencel();
+    }
+  }, [description, onSubmit, onCencel]);
+
+  return confirm;
+};
+
+export default useConfirm;
+```
+
+- 조건식응로 window.confirm(message) 를 통해 message 를 알림창에서 사용자에게 전달하고, 확인을 누르면 onSubmit, 취소라면 onCencel 이 실행된다
+- 이를 좀 더 간단하게 사용하기 위해서 커스텀 훅을 제작하며, useCallback 으로 내부 함수를 캐싱화 시켜줄 수 있다.
