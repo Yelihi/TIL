@@ -279,3 +279,131 @@ function getRandom<T extends "char" | "int" | "bool">(str: T): ReturnTypeByInput
 return Math.floor(Math.random() * 10) as ReturnTypeByInputType[T];
 return Math.floor(Math.random() * 10) as never;
 ```
+
+> **느낌표**
+
+<p>참고로 타입스크립트의 장점은 오타를 줄여준다는 장점도 있다. </p>
+
+```ts
+const head = document.querySelector("#head")!;
+console.log(head);
+
+const head = document.querySelector("#head");
+if (head) {
+  head.innerHTML = "hello";
+}
+```
+
+- head 는 상황에 따라서 null 일 수 있다. 왜냐하면 qs 로 찾지 못하면 null 이기 때문이다.
+- 허나 정말로 있다고 확신이 든다면, 뒤에 !를 붙여서 null 인 가능성을 배제할 수 있다.
+- 다만 추천하지는 않고, 조건문을 해서 null 인 경우를 따져주면 된다.
+
+### 템플릿 리터럴 타입, rest
+
+<p>템플릿 리터럴에도 타입 선언이 가능하다.</p>
+
+```ts
+type World = "world" | "hell";
+
+// type Greeting = "hello world"
+type Greeting = `hello ${World}`;
+```
+
+<p>여러 매개변수를 배열로 받을 때 rest 문법을 사용할 수 있는데, 여기에도 타입을 지정할 수 있다.</p>
+
+```ts
+let arr: string[] = [];
+let arr2: Array<string> = [];
+function rest(...args: string[]) {}
+```
+
+### enum, keyof, typeof
+
+<p>enum 은 타입의 객체라고 생각하면 되는데, 마치 객체에서 key 값을 불러와서 그것에 대한 value 를 사용하는것처럼 enum 은 value 가 타입이다.</p>
+
+```ts
+const enum EDirection {
+  Up,
+  Down,
+  Left,
+  Right,
+}
+
+const ODirection = {
+  Up: 0,
+  Down: 1,
+  Left: 2,
+  Right: 3,
+} as const; // 나는 이 타입을 정확하게 사용하겠다 하면 사용해주면 된다.
+
+EDirection.Up;
+
+(enum member) EDirection.Up = 0
+
+ODirection.Up;
+
+(property) Up: 0
+
+```
+
+<p>enum 은 자동적으로 0,1,2.. 숫자 타입이 부여가 된다. 물론 커스터마이징을 해줄 수 있으며, 좀 더 쉽게 생각하면 자바스크립트에서는 사라지는 객체라고 생각하면 된다. 사용방법은 객체와 거진 동일하다.</p><br />
+
+<p>근데 사실 enum 을 쓰는 또 하나의 이유가 있는데, 아래 코드를 보면 체감할 수 있을 것이다</p>
+
+```ts
+const enum EDirection {
+  Up,
+  Down,
+  Left,
+  Right,
+}
+
+const ODirection = {
+  Up: 0,
+  Down: 1,
+  Left: 2,
+  Right: 3,
+} as const;
+
+// enum 은 직관적이게도 dir 에 up,down,left,right 만 들어가야 한다는 것을 타입 선언할 수 있다.
+function run(dir: EDirection) {
+  console.log(dir);
+}
+
+run(EDirection.Up);
+
+// 반면 객체는 이렇게 객체타입을 분리하여서 설정을 해주어야 한다.
+type Direction = typeof ODirection[keyof typeof ODirection];
+
+function run1(dir: Direction) {
+  console.log(dir);
+}
+
+run1(ODirection.Up);
+```
+
+- enum 과 달리 객체는 keyof 와 typeof 를 통해서 객체타입을 설정해주어야 한다.
+- 또한 as const 가 없다면 제대로 타입 설정이 안되니 주의하자
+
+### union, intersection
+
+<p>union 은 아마 타입스크립트로 작성하다보면 정말 자주 사용하게 되는 타입이긴 하다. 다만 사용빈도가 많아지는것은 좋지 않다. 그래서 타입에 대해서 좀 더 엄격하게 처리할 필요성은 있다. 일단 유니온은 합집합 개념으로 생각하면 된다. string | number 라고 하면 숫자이거나 문자이거나 둘 다 와도 관계가 없다는 의미이다. 상황에 따라서 인자 타입이 변해야 하는 함수의 경우 유니온을 활용해서 처리할 수 있다. 다만 이렇게 되면 return 값에서 타입적으로 좋지 않은 상황이 오게 된다. 타입스크립트는 모든 경우의 수를 따지기 때문에, 결과 역시 숫자 아님 문자열이라고 판단한다. 명백하게 숫자인 경우라도 숫자 아님 문자라 판단하기에, 문자에서만 사용할수 있는 메서드 사용에 타입 오류를 발생하지 않을 수 있다. (다행이도 대부분은 잘못되었다고 타입이 잡아준다)</p><br />
+
+<p>intersection 는 교집합이라고 생각하면 된다. 두가지 타입이라면 두 가지 타입 모두 만족해야한다. 모든 속성이 다 있어야 한다는 점을 기억하자.</p>
+
+### interface, type
+
+```ts
+interface A {
+  a: string;
+}
+interface A {
+  b: string;
+}
+const obj1: A = { a: "hello", b: "world" };
+
+// 밑에는 오류가 난다.
+type B = { a: string };
+type B = { b: string };
+const obj2: B = { a: "hello", b: "world" };
+```
