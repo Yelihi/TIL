@@ -11,6 +11,7 @@
 - [2023.2.7](#2023-2-7)
 - [2023.2.22](#2023-2-22)
 - [2023.2.23](#2023-2-23)
+- [2023.3.12](#2023-3-12)
 
   <br />
 
@@ -742,3 +743,335 @@ add(2, 3); // '변경'
 - 주의할점은 반드시 기존 함수를 따로 저장해놓아야 한다. 아니면 함수 호출 시 무한 반복되는 상황이 발생할 수 있다.
 
 <p>다만 너무 남용하면 코드의 유지보수성을 해치는 문제가 발생할 수 있기에 신중하게 사용해야한다.</p>
+
+## 2023-3-12
+
+### 자바스크립트를 통한 MVC 패턴
+
+<p>리엑트가 없다면 자바스크립트만으로 UI 를 구성하여야 한다. 이렇게 UI 를 구현하는 방법 중 정형화된 방법패턴을 디자인 패턴이라고 한다. 패턴은 곧 문제 해결에 쓰이는 해법이다. 프로그래밍에서 이렇게 문제 해결에 사용되는 여러가지 접근법을 디자인 페턴이라고 하며 이중 화면 개발에 많이 쓰이는 디자인 패턴이 MVC 이다.</p>
+
+- 모델(Model) : 데이터를 관리하는 역할. API 나 브라우저 로컬 저장소에 있는 데이터를 가져와 어플리케이션에서 사용할 수 있는 모양으로 만든다.
+- 뷰(View) : 사용자가 볼 수 있는 화면을 관리하는 역할을 한다. 데이터를 돔에 출력하거나 사용자가 발생한 이벤트를 처리하는 기능을 수행한다.
+- 컨트롤러(Controller) : 모델과 뷰를 연결하고 움직이는 주체
+
+<p>이제 실제로 초기 셋팅을 한번 해보자</p><br />
+
+<p>아 이전에 앞서 먼저 index.html 를 살펴보자</p>
+
+```html
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lecture React</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header>
+      <h2 class="container">검색</h2>
+    </header>
+    <div class="container"></div>
+    <script type="module" src="./js/main.js"></script>
+  </body>
+</html>
+```
+
+- script 부분은 module(ES module)을 지원하고 main.js 를 불러온다
+
+```js
+import Controller from "./Controller.js";
+import Store from "./store.js";
+import storage from "./storage.js";
+import SearchFormView from "./views/SearchFormView.js";
+import SearchResultView from "./views/SearchResultView.js";
+
+document.addEventListener("DOMContentLoaded", main);
+
+function main() {
+  const store = new Store(storage);
+
+  const views = {};
+
+  new Controller(store, views);
+}
+```
+
+- 그리고 main.js 를 살펴보면, 앞서 설명한 M, V, C 모두가 포함되어있음을 알 수 있다.
+- 우선 store 는 model 이라고 생각하며 된다. 데이터의 저장소
+- 그리고 view 는 말 그대로 view 를 담당한다.
+- store 와 view 를 인자로 controller 에 넘겨준다. 이 controller 는 M,V 사이에서 서로의 작용을 돕는다.
+
+```js
+const tag = "[store]";
+
+export default class Store {
+  constructor(storage) {
+    if (!storage) throw "no storage";
+
+    this.storage = storage;
+  }
+}
+```
+
+- 우선 store 부분이다.
+- 데이터에 대한 부분을 다루게 된다.
+- storage 를 가져와서 this.storage 에 저장을 해준다
+
+```js
+import { createPastDate } from "./helpers.js";
+
+const storage = {
+  keywordData: [
+    { id: 1, keyword: "샐러드" },
+    { id: 2, keyword: "커리" },
+    { id: 3, keyword: "햄버거" },
+  ],
+
+  historyData: [
+    { id: 1, keyword: "검색기록1", date: createPastDate(3) },
+    { id: 2, keyword: "검색기록2", date: createPastDate(2) },
+    { id: 3, keyword: "검색기록3", date: createPastDate(1) },
+  ],
+
+  productData: [
+    {
+      id: 1,
+      name: "비건 샐러드",
+      imageUrl: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
+    },
+    {
+      id: 2,
+      name: "레드 커리",
+      imageUrl: "https://images.unsplash.com/photo-1455619452474-d2be8b1e70cd?ixid=MXwxMjA3fDB8MHxzZWFyY2h8MjF8fGZvb2R8ZW58MHx8MHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=60",
+    },
+    {
+      id: 3,
+      name: "수제 햄버거",
+      imageUrl: "https://images.unsplash.com/photo-1550317138-10000687a72b?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
+    },
+    {
+      id: 4,
+      name: "햄버거와 감자튀김",
+      imageUrl: "https://images.unsplash.com/photo-1594212699903-ec8a3eca50f5?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
+    },
+    {
+      id: 5,
+      name: "토마토 샐러드",
+      imageUrl: "https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
+    },
+    {
+      id: 6,
+      name: "아스파라거스 샐러드",
+      imageUrl: "https://images.unsplash.com/photo-1550304943-4f24f54ddde9?ixid=MXwxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE0fHx8ZW58MHx8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=60",
+    },
+  ],
+};
+
+export default storage;
+```
+
+- storage 는 위처럼 데이터가 모여있는 파일이다
+
+```js
+export function qs(selector, scope = document) {
+  if (!selector) throw "no selector";
+
+  return scope.querySelector(selector);
+}
+
+export function qsAll(selector, scope = document) {
+  if (!selector) throw "no selector";
+
+  return Array.from(scope.querySelectorAll(selector));
+}
+
+export function on(target, eventName, handler) {
+  target.addEventListener(eventName, handler);
+}
+
+export function delegate(target, eventName, selector, handler) {
+  const emitEvent = (event) => {
+    const potentialElements = qsAll(selector, target);
+
+    for (const potentialElement of potentialElements) {
+      if (potentialElement === event.target) {
+        return handler.call(event.target, event);
+      }
+    }
+  };
+
+  on(target, eventName, emitEvent);
+}
+
+export function emit(target, eventName, detail) {
+  const event = new CustomEvent(eventName, { detail });
+  target.dispatchEvent(event);
+}
+
+export function formatRelativeDate(date = new Date()) {
+  const TEN_SECOND = 10 * 1000;
+  const A_MINUTE = 60 * 1000;
+  const A_HOUR = 60 * A_MINUTE;
+  const A_DAY = 24 * A_HOUR;
+
+  const diff = new Date() - date;
+
+  if (diff < TEN_SECOND) return `방금 전`;
+  if (diff < A_MINUTE) return `${Math.floor(diff / 1000)}초 전`;
+  if (diff < A_HOUR) return `${Math.floor(diff / 1000 / 60)}분 전`;
+  if (diff < A_DAY) return `${Math.floor(diff / 1000 / 60 / 24)}시간 전`;
+  return date.toLocaleString("ko-KR", {
+    hour12: false,
+    dateStyle: "medium",
+  });
+}
+
+export function createPastDate(date = 1, now = new Date()) {
+  if (date < 1) throw "date는 1 이상입니다";
+
+  const yesterday = new Date(now.setDate(now.getDate() - 1));
+  if (date === 1) return yesterday;
+
+  return createPastDate(date - 1, yesterday);
+}
+
+export function createNextId(list = []) {
+  return Math.max(...list.map((item) => item.id)) + 1;
+}
+```
+
+- 위 부분은 헬퍼부분으로 마치 제이쿼리를 사용하는것처럼, 좀 더 element 를 생성하기 편하게 한다던지, 이벤트를 구독하는 등 앞으로 자주 사용할 함수들을 더 사용하기 편하게 도와준다
+- 계속해서 addEventListner 를 사용하는것보다 on 함수를 사용하는것이 간편하다.
+
+```js
+import { emit, on } from "../helpers.js";
+
+const tag = "[View]";
+
+export default class View {
+  constructor(element) {
+    if (!element) throw "no element";
+
+    this.element = element;
+    this.originalDisplay = this.element.style.dispaly || "";
+
+    return this;
+  }
+
+  hide() {
+    this.element.style.display = "none";
+    return this;
+  }
+
+  show() {
+    this.element.style.display = this.originalDisplay;
+    return this;
+  }
+
+  on(eventName, handler) {
+    on(this.element, eventName, handler);
+    return this;
+  }
+
+  emit(eventName, data) {
+    emit(this.element, eventName, data);
+    return this;
+  }
+}
+```
+
+- 기존 헬퍼 함수를 활용하여 View 의 메서드를 다시 정의해준다
+- 메서드들이 this 를 리턴해주기에, 체이닝이 가능하다.
+- 그리고 display 에 한해 show 와 hide 를 구현해준다.
+
+```js
+const tag = "[Controller]";
+
+export default class Controller {
+  constructor(store, view) {
+    this.store = store;
+  }
+}
+```
+
+- 마지막으로 controller 부분이다.
+- 이제 여기서 store 와 view 를 가져와서 서로를 연결시켜준다. 즉 model 과 view 의 연결지점
+- view 는 말그대로 화면 렌더를 담당하고, 그 렌더에 필요한 데이터를 store 에서 제공해주어야 한다.
+- 반대로 store 에서 적합한 데이터를 제공하기 위해 사용자의 화면 이벤트를 view 에서 제공해주어야 한다.
+
+<p>기본적인 구성은 위와 같고, 이제 각 요소가 추가될 때마다 View 를 추가하면서 구조를 완성해나가면 된다. 한가지 예시 코드를 살펴보면, 검색창을 만들었다고 가정해보자. 아래 코드는 SearchFormView 로서 검색창의 화면을 담당하는 class 이다. </p>
+
+```js
+import { on, qs } from "../helpers.js";
+import View from "./View.js";
+
+const tag = "[SearchFormView]";
+
+// view 를 상속받는다.
+export default class SearchFormView extends View {
+  constructor() {
+    // view 의 constructor
+    // qs 는 헬퍼에서 가져온 함수. 엘리멘트를 가져온다.(queryselector)
+    super(qs("#search-form-view"));
+
+    // 역시나 queryselect 로 input 과 삭제div 를 가져온다.
+    this.inputElement = qs("[type=text]", this.element);
+    this.resetElement = qs("[type=reset]", this.element); // scope 결정
+    // 삭제버튼 숨기기
+    this.showResetButton(false);
+    // 이벤트를 구독하기
+    this.bindEvent();
+  }
+
+  // 버튼 숨기기
+  showResetButton(visible = true) {
+    this.resetElement.style.display = visible ? "block" : "none";
+  }
+
+  // 이벤트 바인드 하기
+  // 여기서 한꺼번에 다 등록시켜준다. (addEventListner)
+  bindEvent() {
+    // 검색창에 keyup 이벤트
+    on(this.inputElement, "keyup", () => this.handleKeyup());
+    // 실제 검색 keyword 를 제출할 때 이벤트
+    on(this.element, "submit", (event) => this.handleSubmit(event));
+    // 삭제버튼을 클릭할 때의 이벤트
+    on(this.resetElement, "click", () => this.handleResetClick());
+  }
+
+  // 이벤트에 연결된 keyup callback 함수
+  handleKeyup() {
+    // inputElement 의 value 를 가져와서 그 길이가 1이상이면
+    // showResetButton = true 만들기
+    const { value } = this.inputElement;
+    this.showResetButton(value.length > 0);
+
+    // 실제 검색어가 다 지워졌을 때, resetClick 과 동일한 함수를 실행시킨다.
+    if (value.length <= 0) {
+      this.handleResetClick();
+    }
+  }
+
+  // 리셋 클릭 시 삭제버튼을 false 하고, 새로운 커스텀 이벤트 @reset 을 등록하여 실행시킨다.
+  handleResetClick() {
+    this.showResetButton(false);
+    this.emit("@reset");
+  }
+
+  // 검색어를 기반으로 제출을 한다 -> 추후 결과값 창을 렌더링 한다.
+  // 하지만 이 view 는 검색창 view이기에 결과값 div 의 렌더링에는 직접적인 행동을 가하지 않는다.
+  // 따라서 @submit 이라는 커스텀 이벤트와, details 에 keyword 를 담아서 전달할 뿐이다.
+  // 이를 받고 실제 결과값을 렌더링 하는것은 SearchResultView 에서 담당하게 된다.
+  handleSubmit(event) {
+    event.preventDefault();
+    console.log("handleSubmit");
+    const { value } = this.inputElement;
+    this.emit("@submit", { value });
+  }
+}
+```
+
+- 주석을 보면 어느정도 이해가 갈 것이다.
+- 명확하게 하고 있는 것은 담당하는 view 의 렌더과정만 신경쓰며, 다른 element 의 render 는 담당하지 않게 설계한다.
+- 즉, 이 view 는 검색창 내 검색어가 렌더링 되거나 삭제될 때의 view 모습을 담당한다. 검색어로부터 파생되는 다른 view 의 이벤트는 다른 view 가 담당한다.
