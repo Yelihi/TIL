@@ -33,3 +33,52 @@ function getRandom<T extends "char" | "int" | "bool">(str: T): ReturnTypeByInput
     return Boolean(Math.round(Math.random())) as ReturnTypeByInputType[T]; // ❌ 'boolean' 타입은 'never'타입에 할당할 수 없다.
   }
 }
+
+function unknownColor(x: never): never {
+  throw new Error("unknown color");
+}
+
+type Color = "red" | "green" | "blue";
+
+function getColorName(c: Color): string {
+  switch (c) {
+    case "red":
+      return "is red";
+    case "green":
+      return "is green";
+    case "blue":
+      return "is blue";
+    default:
+      return unknownColor(c); // 'string' 타입은 'never' 타입에 할당할 수 없음
+  }
+}
+
+const enum EDirection {
+  Up,
+  Down,
+  Left,
+  Right,
+}
+
+const ODirection = {
+  Up: 0,
+  Down: 1,
+  Left: 2,
+  Right: 3,
+} as const;
+
+// enum 은 직관적이게도 dir 에 up,down,left,right 만 들어가야 한다는 것을 타입 선언할 수 있다.
+function run(dir: EDirection) {
+  console.log(dir);
+}
+
+run(EDirection.Up);
+
+// 반면 객체는 이렇게 객체타입을 분리하여서 설정을 해주어야 한다.
+type Direction = typeof ODirection[keyof typeof ODirection];
+
+function run1(dir: Direction) {
+  console.log(dir);
+}
+
+run1(ODirection.Up);
