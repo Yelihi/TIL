@@ -1,0 +1,30 @@
+<!--이 문서가 html 이라는것을 선언하는 것이다. 이는 html 5에 도입해서 아래처럼 간단한 선언만으로도 가능해졌고, 이전에는 각 html 의 버전까지 기입해주었어야 했다-->
+<!DOCTYPE html>
+<!-- root tag 이자. html 문서는 반드시 /html 으로 끝내야 한다. 여기 사용하는 lang code 는 iso 639-1 에서 정의하는 코드를 사용한다.-->
+<!-- 문서 전체의 언어를 결정한다.-->
+<html lang="en">
+  <!-- 문서의 정보나 전체 페이지 로딩 전 필요한 외부 문서를 불러올 때 사용된다. -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 페이지의 타이틀을 지정할 수 있다. 검색엔진 검색 결과물에서 타이틀의 텍스트가 가장 크게나오는 타이틀로 사용되며, 반드시 텍스트이며 반드시 지정이 되어야 한다.-->
+    <title>반드시 지정하자</title>
+    <!-- 스타일 태그는 css 를 직접 적용시키는 태그. style 은 가장 나중에 적용된 스타일이 우선권을 가진다.-->
+    <style></style>
+    <!-- base-->
+    <!-- 절대경로와 상대경로를 구별해야하는데 base 는 상대경로 전 오게될 url 을 설정할 때 사용할 수 있다. -->
+    <base href="https://google.com" target="_self" />
+    <!-- link-->
+    <!-- href 는 파일의 위치를 지정해주는 속성이며, hreflang 은 링크된 파일의 언어 결정, rel 은 현재문서와 링크된 문서의 관계성을 지정해주는 속성-->
+    <!-- 아이콘 사이즈는 16,32,64 사이즈를 권장한다-->
+    <link href="icon.png" rel="icon" type="image/png" />
+    <link href="favi.ico" rel="icon" sizes="16X16" />
+    <link href="favi.gif" rel="icon" type="image/gif" sizes="32X32" />
+    <!-- script -->
+    <!-- 자바스크립트 파일을 불러오거나 직접 스크립트를 주입할떄 사용하는 태그-->
+    <script src="script.js"></script>
+  </head>
+  <!-- body 는 브라우저 창안에 보여주는 컨탠츠를 담고 있는 태그이다.-->
+  <body></body>
+</html>

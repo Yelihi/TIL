@@ -7,6 +7,7 @@
 - [2023.3.10](#2023-3-10)
 - [2023.3.13](#2023-3-13)
 - [2023.3.15](#2023-3-15)
+- [2023.3.16](#2023-3-16)
 
   <br />
 
@@ -243,3 +244,112 @@
 - article : section 이 구간을 나누었다면, article 은 실제 내용을 넣을 떄 사용한다. article 이 자식
 - aside : 서포트적인 내용을 작성할 때 사용한다. 컴포넌트 내부에서도 사용가능하며, 사이드바처럼 페이지 전체 내 서포트를 사용할 때도 사용한다
 - footer: 말그대로 footer
+
+## 2023-3-16
+
+### Form
+
+<p>form 안에 소속된 Input과 서버간의 정보 교환, 정보 제출을 위해 컨트롤을 포함하는 구성요소. form 태그만이 가지고 있는 특별한 속성들이 존재하는데, 다음과 같다.</p><br />
+
+> **acceptcharset**
+
+- 서버가 허용하는 문자 인코딩의 목록을 지정
+- 이걸 설정하지 않으면 페이지 인코딩과 같은 인코딩을 사용하게 된다.
+- 자주쓰이는 것은 UTF-8 과 ISO-8859-1 방식이 있다.
+- 우리가 한글을 깨지지않게 렌더링 하고 싶다면 UTF-8 을 사용하면 된다.
+
+> **action**
+
+- form input에 작성된 값을 받는 서버의 URI (uniform resource identifier)
+
+> **autocomplate**
+
+- on, off 로 설정해주며, 예전에 주입했던 값을 보여줄것인지에 대한 설정
+- 보통 브라우저 설정에 보면 autofill 이 있는데, 이 설정을 off 로 해둔다면 autocomplete 를 on 해도 소용이 없다.
+
+> **method**
+
+- post : 서버에 정보를 주입시키고 주입시킨 결과를 받는 정보 교환 방식
+- get : 서버에 저장된 값을 받아 올 때 사용하는 정보 교환 방식
+
+> **novalidate**
+
+- form 에 기입된 값을 validation 과정을 거치지 않고 보내고 싶을 때
+
+> **target**
+
+- 서버에서 받은 반응값을 어느 프레임에 뿌려줄것인지를 설정하는 속성
+- \_self, \_blank, \_parent 처럼 링크 태그와 동일하다
+
+### Input
+
+<p>웹 기반 양식에서 사용자의 데이터를 받을수 있는 창. input 은 type 속성을 활용할 수 있다.</p><br />
+
+> **autocomplate**
+
+- 예전에 주입했던 값을 보여줄것인지에 대한 설정
+
+> **autofocus**
+
+- true 일 경우 인풋에 커서를 포커스 시키는 속성
+
+> **disabled**
+
+- input 을 사용하지 못하게 막는 설정
+
+> **form**
+
+- input이 종속되어있는 form의 id 값을 지정할 수 있는 속성
+
+> **list**
+
+- 추천하고자 하는 input 값을 가지고 있는 데이터 리스트의 id 를 지정할 떄 사용하는 속성
+
+> **name**
+
+- input의 이름을 정해준다
+
+> **require**
+
+- form을 submit 하기전에 필수적으로 값을 가지고 있어야 하는 input으로 설정할 때 사용하는 속성
+
+> **value**
+
+- 기본적으로 주어지는 input의 값을 설정할 떄 사용하는 속성
+
+## HTML, HEAD, BODY
+
+<p>가장 중요한 부분이며, 하나하나 정리해보자</p>
+
+```html
+<!--이 문서가 html 이라는것을 선언하는 것이다. 이는 html 5에 도입해서 아래처럼 간단한 선언만으로도 가능해졌고, 이전에는 각 html 의 버전까지 기입해주었어야 했다-->
+<!DOCTYPE html>
+<!-- root tag 이자. html 문서는 반드시 /html 으로 끝내야 한다. 여기 사용하는 lang code 는 iso 639-1 에서 정의하는 코드를 사용한다.-->
+<!-- 문서 전체의 언어를 결정한다.-->
+<html lang="en">
+  <!-- 문서의 정보나 전체 페이지 로딩 전 필요한 외부 문서를 불러올 때 사용된다. -->
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- 페이지의 타이틀을 지정할 수 있다. 검색엔진 검색 결과물에서 타이틀의 텍스트가 가장 크게나오는 타이틀로 사용되며, 반드시 텍스트이며 반드시 지정이 되어야 한다.-->
+    <title>반드시 지정하자</title>
+    <!-- 스타일 태그는 css 를 직접 적용시키는 태그. style 은 가장 나중에 적용된 스타일이 우선권을 가진다.-->
+    <style></style>
+    <!-- base-->
+    <!-- 절대경로와 상대경로를 구별해야하는데 base 는 상대경로 전 오게될 url 을 설정할 때 사용할 수 있다. -->
+    <base href="https://google.com" target="_self" />
+    <!-- link-->
+    <!-- href 는 파일의 위치를 지정해주는 속성이며, hreflang 은 링크된 파일의 언어 결정, rel 은 현재문서와 링크된 문서의 관계성을 지정해주는 속성-->
+    <!-- 아이콘 사이즈는 16,32,64 사이즈를 권장한다-->
+    <link href="icon.png" rel="icon" type="image/png" />
+    <link href="favi.ico" rel="icon" sizes="16X16" />
+    <link href="favi.gif" rel="icon" type="image/gif" sizes="32X32" />
+    <!-- script -->
+    <!-- 자바스크립트 파일을 불러오거나 직접 스크립트를 주입할떄 사용하는 태그-->
+    <script src="script.js"></script>
+  </head>
+  <!-- body 는 브라우저 창안에 보여주는 컨탠츠를 담고 있는 태그이다.-->
+  <body></body>
+</html>
+```

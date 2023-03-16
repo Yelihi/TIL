@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Form</title>
+    <style>
+      .field-item {
+        padding: 5px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Registration Form</h1>
+    <form action="">
+      <fieldset>
+        <legend>personal details</legend>
+        <div class="field-item">
+          <label for="fullname">full name</label>
+          <input type="text" name="fullname" id="fullname" placeholder="insert your full name" required />
+        </div>
+        <div class="field-item">
+          <label for="email">email</label>
+          <input type="email" name="email" id="email" placeholder="insert your email" required />
+        </div>
+        <div class="field-item">
+          <label for="address">address</label>
+          <textarea name="address" id="address" cols="30" rows="10" placeholder="insert your address" required></textarea>
+        </div>
+        <div class="field-item">
+          <label for="postcode">postcode</label>
+          <input type="tel" name="postcode" id="postcode" placeholder="insert your postcode" />
+        </div>
+        <div class="field-item">
+          <label>gender</label><br />
+          <input type="radio" id="male" name="gender" value="male" required />
+          <label for="male">male</label>
+          <input type="radio" id="female" name="gender" value="female" required />
+          <label for="female">female</label>
+          <input type="radio" id="other" name="gender" value="other" required />
+          <label for="other">other</label>
+        </div>
+        <div class="field-item">
+          <label>age group</label><br />
+          <input type="radio" id="10_20" name="agegroup" value="10_20" required />
+          <label for="10_20">10_20</label>
+          <input type="radio" id="21_30" name="agegroup" value="21_30" required />
+          <label for="21_30">21_30</label>
+          <input type="radio" id="31_40" name="agegroup" value="31_40" required />
+          <label for="31_40">31_40</label>
+          <input type="radio" id="41_50" name="agegroup" value="41_50" required />
+          <label for="41_50">41_50</label>
+        </div>
+        <div class="field-item">
+          <label for="eyecolor">eye color</label>
+          <input type="color" id="eyecolor" name="eyecolor" required />
+        </div>
+        <div class="field-item">
+          <label for="birthday">birthday</label>
+          <input type="date" id="birthday" name="birthday" required />
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>create your account</legend>
+        <div class="field-item">
+          <label for="login">username</label>
+          <input type="text" id="login" name="login" placeholder="insert your username" />
+        </div>
+        <div class="field-item">
+          <label for="password">password</label>
+          <input type="password" id="password" name="password" placeholder="insert your password" />
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>additional information</legend>
+        <div class="field-item">
+          <label for="monthMovedIn">which month did you move to the current premise?</label>
+          <input type="month" name="monthMovedIn" id="monthMovedIn" />
+        </div>
+        <div class="field-item">
+          <label for="noOfKids">how many kids do you have?</label>
+          <input type="number" id="noOfKids" name="noOfKids" placeholder="select no of kids" />
+        </div>
+        <div class="field-item">
+          <label>do you own any vehicles?</label><br />
+          <input type="checkbox" id="vehicle1" name="vehicle1" value="Bike" />
+          <label for="vehicle1">I have a bike</label>
+          <input type="checkbox" id="vehicle2" name="vehicle2" value="Car" />
+          <label for="vehicle2">I have a car</label>
+          <input type="checkbox" id="vehicle3" name="vehicle3" value="Boat" />
+          <label for="vehicle3">I have a boat</label>
+        </div>
+        <div class="field-item">
+          <label for="cars">what is the brand of your cars?</label><br />
+          <select name="cars" id="cars" size="4" multiple>
+            <option value="volvo">Volvo</option>
+            <option value="ssab">Ssab</option>
+            <option value="flat">Flat</option>
+            <option value="audi">Audi</option>
+          </select>
+        </div>
+        <div class="field-item">
+          <label for="profilePhoto">upload your photo</label>
+          <input type="file" name="profilePhoto" id="profilePhoto" />
+        </div>
+        <div class="field-item">
+          <label for="happyrate">how happy are you right now?</label>
+          <input type="range" name="happyrate" id="happyrate" />
+        </div>
+        <div class="field-item">
+          <label for="search">find your pet</label>
+          <input type="search" id="search" name="search" />
+        </div>
+        <div class="field-item">
+          <label for="website">your website</label>
+          <input type="url" id="website" name="website" />
+        </div>
+      </fieldset>
+      <input type="reset" />
+      <input type="submit" value="submit" />
+    </form>
+  </body>
+</html>
