@@ -353,3 +353,75 @@
   <body></body>
 </html>
 ```
+
+## 2023-3-18
+
+### meta tag
+
+<p>meta 태그는 most effective tatics available 의 줄임말으로서, 여기서 tactic은 술책이나 전술이라는 의미로서, 결국 웹 페이지를 가장 적합하게 사용하기 위해서 그 정보를 제공해주기 위한 태그이다. 페이지에 보여지지 않은 태그이면서 페이지를 렌더링하는 브라우저, 서치엔진, 웹 서비스에서 읽혀지는 하나의 헤더이다. 메타 태그는 브라우저, 사용기기, 소셜 미디어, 서치엔진을 위한 태그이다.</p><br />
+
+```html
+<!-- 한글을 지원한다. -->
+<meta charset="UTF-8" />
+
+<!-- 애플이 IPhone이나 아이패드등의 모바일 기기안의 브라우저에서 페이지를 렌더링할떄 크기를 결정하는 값을 지정하기 위해 만든 메타 테그 -->
+<meta name="viewport" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<!-- 페이지에 대한 설명을 나타내며 서치엔진이 파악하는 정보이다. -->
+<meta name="Description" content="This is the page description" />
+
+<!-- 페이지에 대한 키워드를 나타낸다. 단 설명과 더불어 불필요한 정보를 입력하면 서치엔진이 스팸 처리를 해버릴 수 있으니 주의하자 -->
+<meta name="Keywords" content="Wonik, html 완전정복" />
+
+<!-- 검색엔진 봇이 페이지에 어떻게 반응해야하는지를 나타낸다 -->
+<!-- all : 이 페이지를 포함해 링크가 걸린 모든 페이지를 수집 대상으로 정하게 하는 설정 -->
+<meta name="Robots" content="all" />
+<!-- none : 인덱싱을 하지 말고 링크가 걸린 페이지를 수집대상에서 제외 -->
+<meta name="Robots" content="none" />
+<!-- index : 페이지를 수집 대상에 포함시킨다 -->
+<meta name="Robots" content="index" />
+<!-- follow : 페이지를 포함, 링크가 걸린 곳을 수집 대상에 포함하는 설정 -->
+<meta name="Robots" content="follow" />
+<!-- 인터넷 익스플로러의 호환성을 표시하는 것으로서, 어떠한 렌더링 엔진을 사용할지를 선택한다 -->
+<!-- 현재는 아래처럼 최신 엔진으로 렌더링 한다 -->
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+<!-- 페이지를 캐싱하지 않고 항상 서버에서 요청한다 -->
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Pragma" content="no-cache" />
+<!-- 혹은 캐시 만료일을 설정할 수 있다.-->
+<meta http-equiv="Expires" content="Mon, 08 Jun 2020 12:00:00 GMT" />
+
+<!-- 페이지가 초 단위로 리프레쉬 되도록 설정할 수 있다. url을 설정하면 지정 주소로 초 단위 후 이동하게 된다 -->
+<meta http-equiv="Refresh" content="20; url=https://google.com" />
+```
+
+<br />
+
+```html
+<!--2010년 opengraph 라는 메타태그를 통해 페이스북을 통한 원할한 페이지의 공유가 가능-->
+<meta property="og:url" content="https://google.com" />
+<meta property="og:image" content="https://google.com/wonik.jpg" />
+<meta property="og:type" content="website" />
+<meta property="og:description" content="html 정복은 생각보다 어렵다" />
+<meta property="og:locale" content="ko-KR" />
+```
+
+<p>우리가 만든 웹사이트를 좀 더 효과적으로 마케팅하기 위해 정말 중요한 태그들이다</p>
+
+### 웹 브라우저의 작동 원리
+
+<p>우리가 브라우저 주소창에 도메인 주소를 기입하면 브라우저는 네트워킹을 통해 html 을 가져와 브라우저의 렌더링 엔진에 건내주고, 엔진은 html parsing(html 구문을 분석하여 속성들과 요소를 브라우저가 이해할 수 있는 형식으로 변환한다)을 하고 이와 동시에 각종 요소를 html에 명시된대로 트리구조로 잡아준다(DOM Tree). 또한 html 헤더에 들어있는 css, javascript 파일을 다운받는다.</p><br />
+
+<p>parsing 이 된 html 은 이후 DOM 을 생성하는데, DOM 이라는건 결국 html element 하나하나마다 자바스크립트로 동적인 액션을 취할 수 있도록 해주는것인데, 쉽게 말해 요소마다 일종의 연결고리를 달아주어서 우리가 DOM 을 통하여 요소를 타켓할 수 있게 된다. 이는 곧 객체화이며 이러한 요소 객체마다 이 요소를 컨트롤 할 수 있는 메서드를 포함시켜서 객체화 시킨다. 모든 DOM 은 document 객체안에 소속이 된다.</p><br />
+
+<p>html 이 parsing 을 통해 DOM tree를 생성하는 동안, CSS 역시 CSS parsing 을 통해 CSSOM tree 를 생성하고, DOM tree 와 CSSOM tree 을 합쳐서 Render Tree 를 생성한다. 이 트리에 따라 윈도우 안에 요소들을 렌더링 하기 시작한다. 이러한 작업이 진행되는 동안 자바스크립트도 JS interpreter 를 통해 브라우저가 읽을 수 있는 형태로 변환이 되면서 자바스크립트가 실행이 되기 시작한다. 이때부터 body 에 있는 각종 요소들을 순서대로 브라우저 윈도우 안에서 렌더링을 하게 된다.</p><br />
+
+<p>우리 눈에 보이는 브라우저 윈도우 부분은 모두 document 에 포함되어있다. 특정 요소를 타켓하여 조작을 하고 싶다면, document 를 통해 접근해야 한다. 보통 우리가 요소에 id 를 지정해주었다면, id 는 유니크하기 때문에 이 id 를 통해 접근할 수 있다.</p><br />
+
+<p>DOM은 Javascript와 HTML 을 연결해주는 고리의 역할을 한다. DOM을 프론트엔드에서 활용하려면 Javascript를 사용하여야 한다.</p>
+
+### 브라우저들 간의 비호환성
+
+<p>브라우저마다 렌더링 엔진과 JS 번역기가 다른 성격을 가지고 있기에, 브라우저마다 결과물이 차이점이 나타나게 된다.</p>
