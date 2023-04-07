@@ -853,4 +853,12 @@ export default function CategoriSlug() {
 }
 ```
 
-<p>참고로 뒤 쿼리문이 없어도 페이지가 나타나게 하고 싶다면, 파일을 생성할 때 [[username]].js 로서 만들어주면 된다.</p>
+<p>참고로 뒤 쿼리문이 없어도 페이지가 나타나게 하고 싶다면, 파일을 생성할 때 [[username]].js 로서 만들어주면 된다.</p><br />
+
+<p>또 알아두어야 할 것이 있는데, 페이지를 리로드 하는 방식이다. 3가지정도로 표현될 수 있는데, 각각 특성이 있다.</p><br />
+
+- location.replace('url'): 로컬 state 유지 안됨(리렌더)
+- router.push(url): 로컬 state 유지 / data fetching 일어남
+- router.push(url, as, { shallow: true }): 로컬 state 유지 / data fetching 안 일어남
+- 다만 url 이 변경되면 뭐가 되었던 data fetching 이 일어난다. 즉 동일한 url 에서 query 만 변경될 때 data fetching 을 shallow 으로 조절할 수 있다.
+
