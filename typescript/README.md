@@ -6,6 +6,7 @@
 
 - [2023.2.26](#2023-2-26)
 - [2023.3.12](#2023-3-12)
+- [2023.4.9](#2023-4-9)
 
   <br />
 
@@ -406,4 +407,273 @@ const obj1: A = { a: "hello", b: "world" };
 type B = { a: string };
 type B = { b: string };
 const obj2: B = { a: "hello", b: "world" };
+```
+
+## 2023-4-9
+
+### void
+
+<p>함수의 return 값이 없거나 undefined 여야 만족하는 함수 타입이다. 근데 아래와 같은 상황이 벌어지게 된다.</p><br />
+
+```ts
+interface Human {
+  talk: () => void;
+}
+
+// void 이기에 return 값이 존재하면 안되지 않나?
+const human: Human = {
+  talk() {
+    return "abc";
+  },
+};
+```
+
+<p>여기서에 특징은 함수의 return 값이 void 인 것과, 전달받는 매개변수가 함수인경우, 메서드 인 경우로 나누어서 생각을 해야한다.</p><br />
+
+```ts
+function a(c: () => void): void {
+  return "abc"; // error 발생
+}
+
+// 이 역시 return 값이 있어도 만족한다.
+// 의미라면 결국 return 값이 업어야 된다가 아니라 사용하지 않겠다 라는 의미이다.
+a(() => {
+  return "3";
+});
+
+let b = a(() => {
+  return "3";
+}); // b 가 3이 아니라 void 가 된다.
+// 강제로 바꿔주는 방법이라면
+let c = a(() => {
+  return 3;
+}) as unknown as number;
+```
+
+<p>콜백으로 함수를 전달할 때 그 return 형식을 조금 정해주기 애매할 때 void 를 사용해주면 편리하다.</p><br />
+
+```ts
+declare function forEach(arr: number[], callback: (el: number) => void): void;
+
+// 만약 콜백의 void 가 아닌 undefined 라면 에러가 발생한다.
+// number 혹은 void 일 때 에러가 발생하지 않는다.
+let target: number[] = [];
+forEach([1, 2, 3], (el) => target.push(el));
+```
+
+<p>그러면 unknown 은 무엇일까. 우선 any 를 쓰지 말아야 하는 이유는 타입스크립트가 타입을 찾는것을 포기하게 된다. 반면 unknown 은 지금은 모르겠지만 나중에 직접 타입을 정해주어서 사용하겠다는 의미이기에 any 와는 다르다.</p><br />
+
+```ts
+try {
+} catch (error) {
+  // error 가 unknown 이다.
+  (error as Error).message; // 타입을 Error 로 지정해주기. axios 면 AxiosError 등등..
+}
+```
+
+### 타입가드
+
+<p>타입스크립트는 모든 가능성을 열어두고 검토한다고 생각하면 된다. 그렇기에 타입을 지정할 때 union 의 상황에서 타입 가드를 활용해주면 좀 더 안전하게 타입을 정의할 수 있다.</p><br />
+
+```ts
+function numOrStr(a: number | string) {
+  if (typeof a === "number") {
+    a.toFixed(1);
+  } else {
+    a.charAt(3);
+  }
+}
+
+function numOrnumArray(a: number | number[]) {
+  if (Array.isArray(a)) {
+    a.concat(4);
+  } else {
+    a.toFixed(2);
+  }
+}
+
+numOrStr("123");
+numOrStr(2);
+
+numOrnumArray(3);
+numOrnumArray([1, 2, 3]);
+```
+
+- class 인 경우도 살펴보자
+
+```ts
+class A {
+  aaa(){}
+}
+
+class B {
+  bbb(){}
+}
+
+function aOrb(param: A | B){
+  if(param.instanceOf A){
+    param.aaa();
+  }
+}
+
+aOrb(new A()); // 인자로 인스턴스가 와야한다.
+
+
+```
+
+```ts
+type B = { type: "b"; bbb: string };
+type C = { type: "c"; ccc: string };
+type D = { type: "d"; ddd: string };
+
+// 값으로 구별하는것은 해보았으니, key 로 구별하는 방법이다.
+function typeCheck(a: B | C | D) {
+  if ("bbb" in a) {
+    a.type;
+  } else if ("ccc" in a) {
+    a.ccc;
+  } else {
+    a.ddd;
+  }
+}
+```
+
+<p>때론 커스텀하게 타입을 구분해주는 함수를 직접 만들어야 한다. 아래는 is 를 활용한 예시이다.</p><br />
+
+```ts
+interface Cat {
+  meow: number;
+}
+interface Dog {
+  bow: number;
+}
+// 타입을 판별해준다. 이 함수는 강아지임을 찾아낸다.
+function catOrDog(a: Cat | Dog): a is Dog {
+  if ((a as Cat).meow) {
+    return false;
+  }
+  return true;
+}
+
+function pet(a: Cat | Dog) {
+  if (catOrDog(a)) {
+    console.log(a.bow);
+  }
+}
+```
+
+<p>보이는 예제만으로는 잘 와닫지 않을 수 있는데, 쉽게 생각하면 is 는 어떠한 결과값의 범위를 정해준다고 생각하면 된다. 우리는 어떠한 처리를 하고 그에 대한 결과값이 미지수인 경우를 많이 마주하게 되는데, 대표적으로 promise 가 있다. 기본적으로 promise 는 실행 시 pending -> settled 로 전환이 되고, 이때 settled 는 resolved, rejected 로 나누어 지게 된다. 다만, 자바스크립트는 위 2가지 경우를 인지하지 않고 일단 setteled 로 판단한다.(모든 경우의 수). 그렇기 때문에 만약 여러 promise 요청 중 거절된 요청의 결과만을 배열로 담고 싶다면 아래와 같은 코드를 작성할 수 있다.</p><br />
+
+```ts
+// 거절 상황에 대한 타입 가드
+const isRejected = (input: PromiseSettledResult<unknown>): input is PromiseRejectedResult => {
+  return input.status === "rejected";
+};
+
+const isFulfilled = <T>(input: PromiseSettledResult<T>): input is PromiseResolvedResult<T> => {
+  return input.status === "fulfilled";
+};
+
+const promise = await Promise.allSettled([Promise.resolve("a"), Promise.resolve("b")]);
+const errors = promises.filter(isRejected);
+// 실제 errors 의 타입은 기존 settled 에서 reject 로 변경이 된다.
+// 다만 그냥 input.status === 'rejected' 를 함수로 대입하게 되면 타입 적용이 안된다.
+```
+
+### {} & Object
+
+<p>모양이 객체처럼 되어있어서 객체인것 같지만, 사실은 모든 타입을 지향하고 있다(null 과 undefined 는 제외). 착각하지말고 진짜 객체는 소문자 object 이다. 그리고 앞에서 배운 unknown 의 경우 4.8 버전 이후부터는 null | {} | undefined 를 가리키게 된다.</p>
+
+### 인덱스드 시그니쳐 & 맵드 타입
+
+```ts
+// 인덱스트 시그니처
+type C = { [key in string]: number };
+
+// 맵드 타입
+type B = "Human" | "Mammel" | "Animal";
+type A = { [key in B]: B };
+```
+
+### class 타입
+
+<p>기본적인 클래스 타입 정의는 아래와 같다.</p><br />
+
+```ts
+class A {
+  private a: string;
+  b: number;
+
+  constructor(A: string, B: number) {
+    this.a = A;
+    this.b = B;
+  }
+}
+
+interface C {
+  readonly a: string;
+  b: string;
+}
+
+class B implements C {
+  // 접근 못하게 하는 속성
+  private a: string = "123";
+  //
+  protected b: string = "world";
+
+  method() {
+    console.log(this.a);
+    console.log(this.b);
+  }
+}
+
+class D extends B {
+  method() {
+    console.log(this.a); // private 는 상속받을 때 사용할 수 없다.
+    console.log(this.b); // 예까지는 가능하다.
+  }
+}
+```
+
+- 실제 자바스크립트에서는 private, protected 모두 사라진다.
+
+### 옵셔널, 제너릭
+
+<p>옵셔널은 ? 로 표현하고 있어도 되고, 없어도 되는 타입에 대해서 사용하게 된다. </p><br />
+
+```ts
+let obj: { a: string; b?: string } = { a, b }; // a 만 와도 되고, 다만 c 가 오면 안된다.
+```
+
+<p>제네릭은 마치 타입을 변수로 대입한다고 생각하면 된다. 아래 예제를 살펴보도록 하자.</p><br />
+
+```ts
+// 이렇게 함수를 사용하면 1 + '2' 와 같은 상황이 올 수 있기에 문제가 될 수 있다.
+function add(a: number | string, b: number | string): number | string {
+  return a + b;
+}
+
+// 이렇게 타입을 변수로 넣어줄 수 있다.
+// 사용자는 언제든 사용시 타입을 정해줄 수 있다.
+function add<T>(a: T, b: T): T {
+  return a + b;
+}
+
+add<number>(1, 2); // 3;
+add<string>("1", "2"); // '12';
+
+// 다만 위처럼 작성하면 T 의 범위가 너무 넓어져 버린다.
+// 이럴떄 T 에 제한을 줄 수 있는데, extends 를 사용하면 된다.
+
+function add<T extends number>(a: T, b: T): T;
+
+// 상황에 따라선 매개 변수마다 다른 제한을 줄 수 있다.
+
+function add<T extends number, K extends string>(a: T, b: K): T;
+
+// 이런 제한사항들 중 대표적인것들은 아래와 같다.
+
+// <T extends {...}>
+// <T extends any[]>
+// <T extends (...args: any) => any>
 ```
