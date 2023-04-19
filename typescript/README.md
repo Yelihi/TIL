@@ -7,6 +7,7 @@
 - [2023.2.26](#2023-2-26)
 - [2023.3.12](#2023-3-12)
 - [2023.4.9](#2023-4-9)
+- [2023.4.19](#2023-4-19)
 
   <br />
 
@@ -677,3 +678,93 @@ function add<T extends number, K extends string>(a: T, b: K): T;
 // <T extends any[]>
 // <T extends (...args: any) => any>
 ```
+
+## 2023-4-19
+
+### 보충 정리
+
+> **event.target 이 초점을 잃었을 때**
+
+<p>이벤트를 등록할 때 사용되는 event 에 대한 타입을 적용하는 과정에서, customevent 를 생성할 때 event.target.dataset 으로의 접근이 되지 않는 상황이 발생한적이 있다. 아래 코드를 참고해보자</p><br />
+
+```ts
+  handleClick(event: Event) {
+    // event의 target이 document, element, window등의 요소가 될 수 있기 때문
+    // 정해둔 li 로만 설정하기
+    if (event.target instanceof HTMLLIElement) {
+      const value = event.target.dataset.tab;
+      this.emit<{ value: string | undefined }>("@change", { value });
+    }
+  }
+
+
+```
+
+- 주석에 설명한대로 그냥 event.target.dateset 으로 접근하려 할 시 target이 document 인지 element 인지 확정이 되질 않기 때문에 타입오류가 발생한다.
+- 타입스크립트는 모든 가능성을 고려해야 하기에, 문제가 없어보이는 코드에서도 오류가 발생하는데, 이러한 경우 범위를 축소시켜줌으로서 해결할 수 있다.
+- 현재 접근하려는 DOM 요소를 명시해주면 해결된다. 현재는 <li> 요소이니 이에 맞게 instanceof HTMLLIElement 를 통해 조건을 걸어주면 된다.
+
+> **class 보충 설명**
+
+<p>상황은 이러하다. 2가지 유사한 view 를 담당하는 class가 있으며, 두 class 모두 View class 를 상속한다. 다만 서로 유사하기에 한가지 class 는 나머지 class 를 상속함으로서 사용하고자 한다. 다만 view 를 그려줄 template class 가 서로간의 차이점을 나타내고 있으며, 그렇기에 두 class 에서 template 를 인자로 전달받으려 한다. 이때 타입오류가 발생하였고 이를 해결한 코드는 다음과 같다.</p><br />
+
+```ts
+// KeywordListView.ts
+export default class KeywordListView<T extends Template = Template> extends View {
+  template: T;
+  constructor(element = qs("#keyword-list-view") as HTMLElement, template?: T) {
+    super(element);
+
+    this.template = template ?? (new Template() as T);
+    this.bindEvents();
+  }
+}
+```
+
+- template 인자가 존재한다면 제네릭을 통해 타입 T를 적용시킨다.
+- 만일 인자가 없을 경우 new Template() 를 통해 내부 this.template 에 template 를 부여한다.
+- T 의 범위를 Template 로 해준다. 이렇게 하지 않으면 T 와 기본값 Template 가 서로 연관되질 않는다
+- 클래스 Template 는 다음과 같다.
+
+```ts
+export class Template {
+  getEmptyMessage() {
+    return `<div class="empty-box">추천 검색어가 없습니다</div>`;
+  }
+
+  getList(data: KeywordData[] = []) {
+    return `
+      <ul class="list">
+        ${data.map(this._getItem).join("")}
+      </ul>
+    `;
+  }
+
+  _getItem({ id, keyword }: KeywordData) {
+    return `
+      <li data-keyword="${keyword}">
+        <span class="number">${id}</span>
+        ${keyword}
+      </li> 
+    `;
+  }
+}
+```
+
+- 이 다음 유사한 class는 다음과 같다.
+
+```ts
+export default class HistoryListView extends KeywordListView<KeywordTemplate> {
+  constructor() {
+    super(qs("#history-list-view") as HTMLElement, new KeywordTemplate());
+  }
+}
+
+class KeywordTemplate extends Template {
+  // 생략
+}
+```
+
+- HistoryListView class 는 KeywordListView 를 상속받는다. 그리고 제네릭으로 template 에 적용해줄 KeywordTemplate 를 적용시킨다.
+- 다음 인자로서 new KeywordTemplate() 를 넣어줌으로서 기본값으로 설정된 new Template() 적용을 막아준다.
+- 주의할 점은 KeywordTemplate 는 Template 를 상속받는 클래스여야 한다는 점이다.
