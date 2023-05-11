@@ -1,20 +1,3 @@
-<h2 align="center"> Styled-Component </h1>
-<h3 align="center"> 매일 공부한 부분을 간략하게 정리하자 </h3> 
-<br />
-
-<h2 id="프로젝트소개"> :book: 작성일 기록 </h2>
-
-- [2023.1.12](##2023-1-12)
-- [2023.1.30](#2023-1-30)
-
-  <br />
-
-![--------------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
-
-<h2 id="프로젝트소개"> :book: 간단한 요약 정리 </h2>
-
-## 2023-1-12
-
 ### typescript 내 styled-component 셋팅하기
 
 <p>기본적인 설치에서 type 만 추가해준다고 생각하면 될듯하다.</p>
@@ -189,8 +172,6 @@ const Button = styled.button<{ color: string }>`
 
 - color 라는 새로운 props 전달값을 생성
 - 이에 대한 type 을 설정해주고, 다음 color 설정에 따라 색상을 변경
-
-## 2023-1-30
 
 ### Typescript 에서 media query 셋팅해보기
 
