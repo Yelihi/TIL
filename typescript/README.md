@@ -1,20 +1,3 @@
-<h2 align="center"> Typescript </h1>
-<h3 align="center"> 매일 공부한 부분을 간략하게 정리하자 </h3> 
-<br />
-
-<h2 id="프로젝트소개"> :book: 작성일 기록 </h2>
-
-- [2023.2.26](#2023-2-26)
-- [2023.3.12](#2023-3-12)
-- [2023.4.9](#2023-4-9)
-- [2023.4.19](#2023-4-19)
-
-  <br />
-
-![--------------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
-
-## 2023-2-26
-
 ### 타입스크립트를 학습하는 이유
 
 <p>타입스크립트를 적용시키는 가장 중요한 이유라면, 바로 프로그램의 안정성을 상승시키기 위해 타입스크립트를 사용한다. 타입스크립트는 황당한 에러들을 많이 줄여준다. 다만, 자바스크립트보다 자유도가 줄어들게 된다. 그래도 에러 안나는게 훨씬 좋으니깐 이득이 훨씬 많다.</p> <br />
@@ -27,8 +10,6 @@
 - ts 파일을 실행하는 게 아니라 결과물인 js를 실행해야 한다.
 
 <p>보통 타입스크립트는 노드가 필요한데, 우선 폴더에 npm init -y(전부 yes 하겠다는 의미)를 통해 준비를 끝내고 타입스크립트를 설치해주자. 이후 npx tsc -init 을 통해서 tsconfig.json 까지 설정해주면 준비가 끝났다.</p>
-
-## 2023-3-12
 
 ### 기본적인 type
 
@@ -375,7 +356,7 @@ function run(dir: EDirection) {
 run(EDirection.Up);
 
 // 반면 객체는 이렇게 객체타입을 분리하여서 설정을 해주어야 한다.
-type Direction = typeof ODirection[keyof typeof ODirection];
+type Direction = (typeof ODirection)[keyof typeof ODirection];
 
 function run1(dir: Direction) {
   console.log(dir);
@@ -409,8 +390,6 @@ type B = { a: string };
 type B = { b: string };
 const obj2: B = { a: "hello", b: "world" };
 ```
-
-## 2023-4-9
 
 ### void
 
@@ -678,8 +657,6 @@ function add<T extends number, K extends string>(a: T, b: K): T;
 // <T extends any[]>
 // <T extends (...args: any) => any>
 ```
-
-## 2023-4-19
 
 ### 보충 정리
 
