@@ -1,19 +1,3 @@
-<h2 align="center"> FireBase </h1>
-<h3 align="center"> 매일 공부한 부분을 간략하게 정리하자 </h3> 
-<br />
-
-<h2 id="프로젝트소개"> :book: 작성일 기록 </h2>
-
-- [2023.4.10](#2023-4-10)
-
-  <br />
-
-![--------------------------------------------------------](https://raw.githubusercontent.com/andreasbm/readme/master/assets/lines/rainbow.png)
-
-<h2 id="프로젝트소개"> :book: 간단한 요약 정리 </h2>
-
-## 2023-4-10
-
 ### Audit 응용하기
 
 <p>Light house 를 활용하여 페이지의 성능을 검사할 수 있다. 크롬 개발자 도구에서 Light Housee 를 들어가서 각자 사용하는 device 와 성능하고자 하는 부분에 대해서 체크를 하고 측정을 할 수 있다. 이에 대한 분석 후 점수를 제공해주게 된다.</p><br />
