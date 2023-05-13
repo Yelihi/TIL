@@ -249,3 +249,32 @@ Object.defineProperty(user4, "_age", BazValue);
 - return 문이 없거나 호출되지 않은 함수의 실행 결과
 
 <p>반면 null 은 사용자가 명시적으로 없음을 표현하기 위해 대입한 값입니다. 따라서 본래의 의미에 따라 없음을 표현하고 싶을때는 null을 활용하는것이 좋습니다.</p>
+
+### 리엑티브
+
+<p>getter 와 setter 의 응용예시로서 간단한 리엑티브를 구현하는 과정을 참고해봅시다. 리엑티브는 model 의 변화에 의존하는 view 의 자동 갱신 과정이며, 아래 코드와 같습니다.</p>
+
+```js
+const state = {
+  _data: "Hello Wonik",
+};
+
+const render = () => (document.getElementById("app").innerHTML = `<p>${state.data}</p>`);
+
+Object.defineProperty(state, "data", {
+  get() {
+    return state._data;
+  },
+  set(value) {
+    state._data = value;
+    render();
+  },
+});
+
+render();
+
+// 다른 로직
+
+state.data = "이게맞나요";
+state.data = "진짜 데이터만 변경해도 렌더가 되네요";
+```
