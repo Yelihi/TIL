@@ -16,9 +16,13 @@ describe("Counter", () => {
 
   //increase 가 잘되는지 확인
   it("increase correctly", () => {
-    component.getInstance().onIncrese();
-    expect(component.getInstance().state.value).tobe(2);
     const tree = component.toJSON();
+    renderer.act(() => {
+      tree.onIncrese();
+    });
+    tree = component.toJSON();
+
+    expect(component).tobe(2);
     expect(tree).toMatchSnapshot();
   });
 });
