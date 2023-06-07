@@ -1,7 +1,11 @@
 import React from "react";
 
-const Greet = () => {
-  return <div>Hello</div>;
+type GreetProps = {
+  name?: string;
+};
+
+const Greet = (props: GreetProps) => {
+  return <div>Hello {props.name ? props.name : null}</div>;
 };
 
 export default Greet;
