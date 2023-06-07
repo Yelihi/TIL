@@ -22,3 +22,43 @@ Jest 는 자바스크립트의 테스트 프레임워크입니다. 반면 RTL �
 ```
 yarn add --dev react-test-renderer
 ```
+
+### jest watch mode
+
+Watch mode is an option that we can pass to Jest asking to watch files that have changed since the last commit and execute tests related only to those changed files
+<br />
+
+An optimization designed to make your tests run fast regardless of how many tests you have
+<br />
+
+(즉 jest 는 이전 commit을 기준으로 변경된 테스트 코드만 테스트를 실행한다. 그래서 속도를 향상시킬 수 있다.)
+<br />
+
+### Filename Conventions
+
+- files with .test.js or .test.tsx suffix
+- files with .spec.js or .spec.tsx suffix
+- files with .js or .tsx suffix in "_"tests"_"folders
+
+<br />
+
+Recommendation is to always put your tests next to the code they are testing so that relative imports are shorter
+
+<br />
+
+### Code Coverage
+
+A metric that can help you understand how much of your software code is tested
+<br />
+
+- Statement coverage: how many of the statements in the software code have been executed
+- Branches coverage: how many of the branches of the control structures (if statements for instance) have been executed
+- Function coverage: how many of the functions defined have been called and finally
+- Line coverage: how many of lines of source code have been tested
+
+```
+// pakage.json
+
+"coverage": "yarn test --coverage --watchAll --collectCoverageFrom='src/components/**/*.{ts,tsx}'"
+
+```
