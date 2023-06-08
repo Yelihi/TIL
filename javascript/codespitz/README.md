@@ -95,3 +95,121 @@ D = B
 ### Direct Flow Control(직접 flow 명령어)
 
 현재 자바스크립트에서는 Label 이라는 것이 있다. Label 은 $를 포함할 수 없다는 점 빼고는 변수의 이름 규칙과 동일하다.
+<br />
+
+현재는 auto label 이라고 반복문같이 순회하는 경우 자동으로 label 을 생성한다. 그래서 for 를 사용할 때는 label 을 사용하지 않아도되고, break 옆에 label 이름을 작성해주지 않아도 된다.
+
+### Switch
+
+스위치문은 스위치라는 키워드 그리고 괄호가 나오고 중괄호가 나오게 된다. 여기서 중괄호는 사실 다른 중괄호와는 다른 어떤 문법적인 토큰 요소이다. 스위치는 중괄호 부분을 특별한 공간으로 만들어주기 때문에 좀 따로 생각해야한다.
+<br />
+
+앞에서 label 의 표현이 aa: 라는것을 알게 되었다. switch 를 보게 디면 case: 라는 것을 확인할 수 있다. 즉, switch 문은 특별한 label 문이다.
+<br />
+
+```js
+switch (true) {
+  // 특별한 label 만 넣을 수 있다. case, default 말고는 다른 label 을 사용할 수 없다.
+
+  case true:
+    console.log("a");
+  case false:
+    console.log("b");
+  default:
+    console.log("c");
+}
+```
+
+<br />
+
+최근 구글이나 사파리에서의 switch 문의 특징점이 있다. fall through 라는 성질이 label 에 존재하고, break 를 걸어주지 않으면 그대로 밑으로 쭉 진행이 된다. 즉, true 인 첫번쨰 케이스를 값으로서 찾았다고 해도 콘솔은 a,b,c 모두 출력이 된다. <br />
+
+특이사항은, dafult의 경우 만일 switch 에서 일치하는 값이 존재한다면, 처리되지는 않는다. 위 예시에서 default 를 위로 올렸을 때를 생각해보자
+<br />
+
+```js
+switch (true) {
+  default:
+    console.log("c");
+  case true:
+    console.log("a");
+  case false:
+    console.log("b");
+}
+
+// 결과는 a,b
+```
+
+<br />
+
+신기하게도 c 는 나오지않고 값과 일치하는 a 부터 fall through 가 적용이 되어 a,b 가 나오게 된다. 즉, 우선순위는 값과 case 의 일치여부이며, 일치하지 않는다면 그제서야 default 를 출력하게 된다.
+<br />
+
+```js
+switch (true) {
+  default:
+    console.log("c");
+  case a:
+    console.log("a");
+  case false:
+    console.log("b");
+}
+
+// 결과는 c,a,b
+```
+
+<br />
+
+일치하는 값(true)가 없기 때문에 default 인 c 가 출력이 되고, 이후 fall through 가 적용되어 c,a,b 가 출력이 되어버린다. 만일 default 가 맨 마지막에 있었다면 그냥 c 만 출력이 됬을 것이다.
+
+<br />
+
+스위치문은 자바스크립트에서 런타임 때 평가가 된다. 스위치는 값에 대한 평가를 하기 때문에, 이 값이 꼭 정적일 필요는 없다. 즉, case 옆에 함수호출이 와도 관계가 없다는 의미이다.
+<br />
+
+```js
+switch (true) {
+  case network():
+    console.log("잘 가져왔습니다");
+  case localCache():
+    console.log("캐시라도 있으니 가져왔어요");
+  default:
+    console.log("안내문");
+}
+
+// 이런 표현도 가능하다.
+switch (true) {
+  case network() === "online":
+  case network() === "offline":
+  case network() === "wife":
+  case localCache():
+  default:
+}
+```
+
+<br />
+
+```js
+var c = 2;
+switch (true) {
+  case c++ > 5:
+    console.log(c);
+    break;
+  case c++ > 5:
+    console.log(c);
+    break;
+  case c++ > 5:
+    console.log(c);
+    break;
+  case c++ > 5:
+    console.log(c);
+    break;
+  case c++ > 5:
+    console.log(c);
+    break;
+}
+
+// 답은 7 이 걸린다
+// 순차적으로 해석하기 때문에 계속 c 가 증가하여 최종 true 에 해당할 때 걸리게 된다.
+// 그래서 case 에 증감을 나타내는것을 사용하는것은 주의해야한다
+```
