@@ -62,3 +62,93 @@ A metric that can help you understand how much of your software code is tested
 "coverage": "yarn test --coverage --watchAll --collectCoverageFrom='src/components/**/*.{ts,tsx}'"
 
 ```
+
+### what to test?
+
+- Test component renders
+- Test component renders with props
+- Test component renders in different states
+- Test component reacts to events
+
+### what not to test?
+
+- Implementation details
+- Third party code
+- Code that in not important from a user point of view
+
+### RTL Queries
+
+Every test we write generally involves the following basic steps
+
+- Render the component
+- Find an element rendered by the component
+- Assert againist the element found in step 2 which will pass or fail the test
+
+To render the component, we use the render method from RTL
+
+For assertion, we use expect passing in a value and combine it with a matcher function from jest or jest-dom
+<br />
+
+Queries are the methods that Testing Library provides to find elements on the page
+
+To find a single element on the page, we have
+
+- getBy
+- queryBy
+- findBy
+
+To find multiple elements on the page, we have
+
+- getAllBy
+- queryAllBy
+- findAllBy
+
+The suffix can be one of Role, LabelText, PlaceHolderText, Text, DisplayValue, AltText, Title and finally TestId
+
+### getByRole
+
+By default, many semantic elements in HTML have a role
+<br />
+
+Button element has a button role, anchor element has a link role, h1 to h6 elements have a heading role, checkboxes have a checkbox role, radio buttons have a radio role and so on
+<br />
+
+> **option**
+
+- name : The accessible name is for simple cases qeual to
+  - the label of a form element
+  - the text content of a button or
+  - the value of the aria-label attribute
+- level
+- hidden
+- selected
+- checked
+- pressed
+
+### getByLabelText
+
+getByLabelText will search for the label that matches the given text, then find the element associated with that label
+
+### getByPlaceholderText
+
+getByPlaceholderText will search for all elements with a placeholder attribute and fin one that matches the given text
+
+### getByText
+
+getByText will search for all elements that have a text node with textContent matching the given text. Typically, you'd use this to find paragraph, div or span elements
+
+### getByDisplayValue
+
+getByDisplayValue returns the input, textarea, or select element that has the matching display value
+
+### getByAltText
+
+getByAllText will return the element that has the given alt text. This method only supports elements which accept an alt attribute like <img>, <input>, <area> or custom HTML elements
+
+### getByTitle
+
+getByTitle returns the element that has the matching title attribute
+
+### getByTestId
+
+getByTestId returns the element that has the matching data-testid attribute
