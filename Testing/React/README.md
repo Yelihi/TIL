@@ -152,3 +152,52 @@ getByTitle returns the element that has the matching title attribute
 ### getByTestId
 
 getByTestId returns the element that has the matching data-testid attribute
+
+### Priority Order for Queries
+
+"Your test should resemble how users interact with your code (component, page, etc) as much as possible"
+<br />
+
+1. getByRole
+2. getByLabelText
+3. getByPlaceholderText
+4. getByText
+5. getByDisplayValue
+6. getByAltText
+7. getByTitle
+8. getByTestId
+
+### RTL getAllBy Queries
+
+Find muliple elements in the DOM. getAllBy returns an array of all matching nodes for a query, and throws an error if no elements match
+
+### TextMatch
+
+TextMatch represents a type which can be either a
+
+- string
+- regex
+- function
+
+example
+<br />
+
+```js
+screen.getByText(/hello/i);
+
+// (content?: string, element?: Element | null) => boolean
+screen.getByText((content) => content.startsWith("Hello"));
+```
+
+### queryBy and queryAllBy
+
+queryBy
+
+- Returns the matching node for a query, and return null if no elements match
+- Useful for asserting an element that is not present
+- Throws an error if more than one match is found
+  <br />
+
+queryAllBy
+
+- Returns an array of all matching nodes for a query, and return an empty array if no elements match
