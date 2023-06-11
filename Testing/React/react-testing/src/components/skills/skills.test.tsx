@@ -32,4 +32,20 @@ describe("Skills", () => {
     });
     expect(startLearnningButton).not.toBeInTheDocument();
   });
+
+  // findBy 는 promise 를 반환한다. 즉, timeout 처럼 일정 시간 이후 요소가 등장하는 경우, 사용할 수 있다.
+  // 문제는 기본값 1000 을 넘어가면 fail 이 뜰테니, 시간을 설정해주어야 한다.
+  it("Start learning button is eventually displayed", async () => {
+    render(<Skills skills={skills} />);
+    const startLearningButton = await screen.findByRole(
+      "button",
+      {
+        name: "Start learning",
+      },
+      {
+        timeout: 2000,
+      }
+    );
+    expect(startLearningButton).toBeInTheDocument();
+  });
 });
