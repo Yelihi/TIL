@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, logRoles } from "@testing-library/react";
 import Skills from "./skills";
 
 describe("Skills", () => {
@@ -36,7 +36,10 @@ describe("Skills", () => {
   // findBy 는 promise 를 반환한다. 즉, timeout 처럼 일정 시간 이후 요소가 등장하는 경우, 사용할 수 있다.
   // 문제는 기본값 1000 을 넘어가면 fail 이 뜰테니, 시간을 설정해주어야 한다.
   it("Start learning button is eventually displayed", async () => {
-    render(<Skills skills={skills} />);
+    const view = render(<Skills skills={skills} />);
+    logRoles(view.container);
+    // 아직 버튼이 Login 일때
+    // screen.debug();
     const startLearningButton = await screen.findByRole(
       "button",
       {
@@ -46,6 +49,8 @@ describe("Skills", () => {
         timeout: 2000,
       }
     );
+    // 이제 버튼이 Start Learning 일 때
+    // screen.debug();
     expect(startLearningButton).toBeInTheDocument();
   });
 });

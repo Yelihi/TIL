@@ -213,3 +213,91 @@ switch (true) {
 // 순차적으로 해석하기 때문에 계속 c 가 증가하여 최종 true 에 해당할 때 걸리게 된다.
 // 그래서 case 에 증감을 나타내는것을 사용하는것은 주의해야한다
 ```
+
+### if else 는 되도록 쓰지 말자
+
+if else 는 사실 없는 문법이다. 즉, else 다음에 오는 문이 If 일 뿐이다. 그래서 아래와 같은 코드가 더 정확하다.
+<br />
+
+```js
+if (n > 2) {
+  console.log("abc");
+} else {
+  if (n > 5) {
+    console.log("ddd");
+  } else {
+    console.log("rrr");
+  }
+}
+
+// 이를 그냥
+
+if (n > 2) {
+  console.log("abc");
+} else if (n > 5) {
+  console.log("ddd");
+} else {
+  console.log("rrr");
+}
+
+// 이렇게 표현할 뿐이다.
+```
+
+병행 조건에 의한것은 else if 보다 switch 를 사용하는것이 좋다. 다만 switch 를 쓸때는 반드시 예외 사건을 고려해서 default 를 해야한다. default 가 있기에 mandantory 루트를 탈 수 있게 된다. (즉, 조건문을 빠져나갈 가능성이 없어진다.)
+<br />
+
+아니면 if 의 옵셔널을 사용하려 한다면, 옵셔널로 끝내야한다. 예를 들어서 아래 코드는 사용하면 안되는 것이다.
+<br />
+
+```js
+if(n > 2){
+  //로직
+}else{
+  if(n > 5) // 옵셔널 로직
+}
+
+// 이렇게 되면 중간에 옵셔널이 들어가기 때문에, 코드가 오류를 발생할 가능성이 매우 커진다.
+
+```
+
+### 반복문
+
+```js
+for(선언문 or 식;truthy;ex){
+
+}
+
+// 문은 공문도 있기에 공문을 적어도 된다.
+// 근데 웃긴게 for문에는 falsy 가 되는게 아니라 truthy 가 된다.
+
+for( ;; ){
+  // 무한 루프에 빠진다
+}
+
+// 반면 while 은 공문이 오면 안된다
+
+while(truthy){
+  // 뭐라도 와야한다
+}
+
+do{
+  // 우선 한번은 무조건 실행한다
+}while(truthy)
+
+// 중요한건 while 에 들어가는 truthy 에 들어가는 변수가 body 에 나오는지를 확인하는 것이다.
+
+// 이런건 파악하기가 너무 힘들다
+while(act.method().c){
+  other.action()
+}
+
+// 그래서 보통 조건문을 밖으로 빼낸다.
+
+let a = act.method().c;
+
+while(a){
+  other.action();
+  a = act.method().c;
+}
+
+```
