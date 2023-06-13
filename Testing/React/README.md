@@ -213,3 +213,34 @@ findAllBy
 
 - Returns a promise which resolves to an array of elements when any elements are found which match the given query
 - The Promise is rejected if no elements are found after a default timeout of 1000ms
+
+### User Interactions
+
+A click using a mouse or a keypress using a keyboard. Software has to respond to such interactions. Tests should ensure the interactions are handled as expected
+
+### user-event
+
+A companion library for Testing Library that simulates user interactions by dispatching the events that would happen if the interaction took place in a browser.
+
+<br />
+
+It is the recommended way to test user interactions with RTL
+
+### fireEvent vs user-event
+
+fireEvent is a method from RTL which is used to dispatch DOM events.
+<br />
+
+user-event simulates full interactions, which may fire multiple events and do additional checks along the way.
+<br />
+
+For example, we can dispatch the change event on an input field using fireEvent.
+<br />
+
+When a user types into a text box, the change event on an input field using fireEvent.
+
+<br />
+When a user types into a text box, the element has to be focused, and then keyboard and input events are fired and the selection and value on the element are manipulated as they type.
+<br />
+
+user-event allows you to describe a user interaction instead of a concreate event. It adds visibilty and intractability checks along the way and manipulates the DOM just like a user interactions in the browser would. It factors in that the browser e.g. wouldn't let a user click a hidden element or type in a disabled text box

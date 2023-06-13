@@ -300,4 +300,15 @@ while(a){
   a = act.method().c;
 }
 
+// do while 문은 이렇게 하는게 원래 공식 문법이다
+// 지금은 while 뒤에 ; 을 붙여도 된다.
+do a++; while(a);
+
+// 다양한 for
+
+for ( of )
+for ( in )
+
 ```
+
+while 은 대부분 중문으로 쓴다. 당연하게도 식에 들어간 변수가 body 에 들어와야 하기 때문이다.
