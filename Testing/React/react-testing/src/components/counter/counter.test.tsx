@@ -30,4 +30,15 @@ describe("Counter", () => {
     const countElement = screen.getByRole("heading");
     expect(countElement).toHaveTextContent("1");
   });
+
+  it("renders a count of 2 after clicking the button twice", async () => {
+    user.setup();
+    render(<Counter />);
+    const incrementButton = screen.getByRole("button", {
+      name: "Increment",
+    });
+    await user.dblClick(incrementButton); // 2번 클릭하기
+    const countElement = screen.getByRole("heading");
+    expect(countElement).toHaveTextContent("2");
+  });
 });
