@@ -312,3 +312,247 @@ for ( in )
 ```
 
 while 은 대부분 중문으로 쓴다. 당연하게도 식에 들어간 변수가 body 에 들어와야 하기 때문이다.
+
+### Interface
+
+1. 인터페이스란 사양에 맞는 값과 연결된 속성키의 셋트
+2. 어떤 Object라도 인터페이스의 정의를 충족시킬 수 있다.
+3. 하나의 Object는 여러개의 인터페이스를 충족시킬 수 있다.
+
+### Iterator Interface
+
+1. next 라는 키를 갖고 있고
+2. 값으로 인자를 받지 않고, IteratorResultObject를 반환하는 함수가 온다
+3. IteratorResultObject는 value와 done이라는 키를 갖고 있다.
+4. 이 중 done은 계속 반복할 수 있을지 없을지에 따라 불린값을 반환한다.
+
+```js
+{
+  next(){
+    return { value: 1, done: false }
+  }
+}
+
+{
+  data: [1,2,3,4],
+  next(){
+    return {
+      done: this.data.length === 0,
+      value: this.data.pop()
+    }
+  }
+}
+
+// 이 객체는 계속 next 를 호출하다가 언젠가 done: true 가 된다.
+// 즉 value = 1 일때까지 루프를 돌 수 있다.
+
+```
+
+표현을 조금 보면, 이터레이터 인터페이스를 지킨다라고 한다. ECMAscript 에 명시된 인터페이스를 지켜서 객체를 만든거 뿐이다.
+<br />
+
+### Iterable Interface
+
+1. Symbol.iterator라는 키를 갖고
+2. 값으로 인자를 받지 않고 Iterator Object를 반환하는 함수가 온다.
+
+<br />
+참고로 Symbol은 원시값으로 값으로 해석된다.
+
+```js
+{
+  [Symbol.iterator](){
+    return {
+      next(){
+        return { value: 1, done: false }
+      }
+    }
+  }
+}
+// 스펙을 그대로 구현한 모습
+
+```
+
+<br />
+
+next 만 호출한다면 루프를 계속 돌릴수 있을텐데, 왜 이터러블이 필요할까. 그 이유는 이터레이터 예시를 보면 data 배열의 원소가 다 pop 되면 더이상 루프를 돌리지않는다. 즉 일회성이라는 의미!. 따라서 이를 위해 데이터의 사본을 통해 이터레이터 루프를 돌리게 하고 싶었고, 이를 가능하게 해주는것이 바로 함수 이터러블 이다.
+
+### while문으로 살펴보는 Iterator
+
+```js
+let arr = [1,2,3,4];
+while(arr.length > 0){
+  console.log(arr.pop())
+}
+
+{
+  arr: [1,2,3,4],
+  next(){
+    return {
+      done: arr.length === 0,
+      value: console.log(this.arr.pop())
+    }
+  }
+}
+
+```
+
+<br />
+
+while 은 반복문이며, 얼마나 반복을 해야할지와, 실행 내용은 모두 문 안에 존재한다. 즉 배열 arr 자체로는 반복에 대한 정보를 가지고 있지 않다.
+<br />
+
+이 때 사람들은 어떤 반복의 조건을 값으로 가지고 싶어했고, 그러한 관점에서 Iterator 는 이를 만족할 수 있다. 자세히 Iterator 를 살펴보게 되면, done 이 그 반복의 조건임을 알 수 있다. 즉, 값이면서 반복의 조건이 되는 경우인셈이다.
+<br />
+
+이터레이터(이젠이렇게 표현하기로)의 경우 객체 자체가 반복의 정보를 가지고 있다고 할 수 있다. 기존 반복문은 한번 반복이 끝나면 이후 사라지는데 비해, 이터레이터는 필요할 때 필요한 만큼 반복을 할 수 있다.
+<br />
+
+다시 정리해보자
+
+- 반복자체를 하지는 않지만, 외부에서 반복을 하려고 할때, 반복의 필요한 조건과 실행을 미리 준비해둔 객체
+- 즉, 반복행위와 반복을 위한 준비를 분리
+- 미리 반복에 대한 준비를 해놓고 필요할 때 필요한만큼 반복한다. 즉, 행위는 next 만 호출하면 된다.
+
+<br />
+
+우리가 문으로 반복을 하려고 하면, 필요할 때마다 문을 작성해주어야 한다. 너무나 복잡한 로직이라면, 올바르게 문을 작성할 수 있을지 의문이 들 수 있다.
+
+### 사용자 반복 처리기
+
+직접 이터레이터 반복처리기를 구현
+
+```js
+const loop = (iter, f) => {
+  // Iterable 이라면 Iterator 를 얻음
+  if (typeof iter[Symbol.iterator] == "function") {
+    iter = iter[Symbol.iterator]();
+  } else return;
+
+  //받아온 iteratorObject 가 아니라면 건너띔
+  if (typeof iter.next !== "function") return;
+
+  do {
+    const v = iter.next();
+    if (v.done) return;
+    f(v.value);
+  } while (true);
+};
+
+const iter = {
+  arr: [1, 2, 3, 4, 5],
+  [Symbol.iterator]() {
+    return this;
+  },
+  next() {
+    return {
+      done: this.arr.length == 0,
+      value: this.arr.pop(),
+    };
+  },
+};
+
+loop(iter, console.log);
+```
+
+### 내장반복처리기
+
+> **배열 해체**
+
+```js
+const iter = {
+  arr: [1, 2, 3, 4],
+  [Symbol.iterator]() {
+    return this;
+  },
+  next() {
+    return {
+      done: this.arr.length == 0,
+      value: this.arr.pop(),
+    };
+  },
+};
+
+// 이터러블을 지켜주면, 아래처럼 해체도 가능해진다. 언어의 지원이다. 그냥 알아두자
+const [a, ...b] = iter;
+console.log(a, b); // 4, [3,2,1]
+```
+
+<br />
+
+> **펼치기**
+
+```js
+const iter = {
+  arr: [1, 2, 3, 4],
+  [Symbol.iterator]() {
+    return this;
+  },
+  next() {
+    return {
+      done: this.arr.length == 0,
+      value: this.arr.pop(),
+    };
+  },
+};
+
+const a = [...iter]; // iter 객체를 펼치겠다는것이다. 반드시 이터러블 객체여야 스프레드를 쓸수있다.
+console.log(a); // [4,3,2,1]
+```
+
+<br />
+
+> **나머지 인자**
+
+```js
+const iter = {
+  arr: [1, 2, 3, 4],
+  [Symbol.iterator]() {
+    return this;
+  },
+  next() {
+    return {
+      done: this.arr.length == 0,
+      value: this.arr.pop(),
+    };
+  },
+};
+
+const test = (...arg) => console.log(arg);
+test(...arg); // [4,3,2,1]
+```
+
+<br />
+
+> **For of**
+
+```js
+const iter2 = {
+  [Symbol.iterator]() {
+    return this;
+  },
+  arr: [1, 2, 3, 4, 5, 6],
+  next() {
+    return {
+      done: this.arr.length == 0,
+      value: this.arr.pop(),
+    };
+  },
+};
+
+for (const v of iter2) {
+  console.log(v);
+}
+```
+
+<br />
+
+문자열도 이터러블 객체라고 할 수 있다. 이전엔 split 로 했지만 그냥 요새는 [...string] 을 해주면 된다.
+<br />
+
+폰 노이만 구조에서 코드가 실행이되면 중간에 개입할 수 없다. 이를 동기 명령이라고 한다. 우리는 CPU 를 건들 수 없고 이를 블로킹이라고 한다. 동기적인 명령을 실행하는동안 우리는 아무것도 할 수없고 따라서 블로킹 상태라고 한다.
+<br />
+브라우저는 보통 20초이상 블로킹이 발생한다면 용납하지 않는다. 근데 안드로이드는 어플이 5초이상 블로킹이라면 앱을 종료시켜버린다. 결국 속도 기준은 정적이라고 한다면, 이 정적인 시간동안 처리하는 능력은 CPU의 연산능력에 따라 달려있다.
+어찌되었던 시간문제이기 때문에, 정말로 긴 loop 라면 이를 한번에 돌려서 블로킹 시간을 다 잡는것보다, 쪼개서 돌려야 한다.
+<br />
+최근에는 결국 OS 의 권한이 커지고 있는데, 이유는 게임중에 전화가 오면 게임을 바로 중단시켜야 하기 때문이다. 이러한 예시들로 통해 OS 의 권한이 커지고 있음을 알 수 있다.
