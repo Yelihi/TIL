@@ -244,3 +244,15 @@ When a user types into a text box, the element has to be focused, and then keybo
 <br />
 
 user-event allows you to describe a user interaction instead of a concreate event. It adds visibilty and intractability checks along the way and manipulates the DOM just like a user interactions in the browser would. It factors in that the browser e.g. wouldn't let a user click a hidden element or type in a disabled text box
+
+### Static analysis testing
+
+All types of tests run the code and then compare the outcome against known expected outputs to see if everything works OK <br />
+
+Static testing analyses aspects such as readability, consistency, error handling, type checking, and alignment with best practices <br />
+
+Testing checks if your code works or not, whereas static analysis checks if it is written well or not
+
+### Husky
+
+Husky is a tool that helps imporve your commits and more
