@@ -67,6 +67,7 @@ for (let v of iter4) {
   console.log(v);
 }
 
+// es6 도입
 const iter5 = {
   [Symbol.iterator]() {
     return this;

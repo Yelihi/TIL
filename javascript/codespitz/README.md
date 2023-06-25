@@ -556,3 +556,25 @@ for (const v of iter2) {
 어찌되었던 시간문제이기 때문에, 정말로 긴 loop 라면 이를 한번에 돌려서 블로킹 시간을 다 잡는것보다, 쪼개서 돌려야 한다.
 <br />
 최근에는 결국 OS 의 권한이 커지고 있는데, 이유는 게임중에 전화가 오면 게임을 바로 중단시켜야 하기 때문이다. 이러한 예시들로 통해 OS 의 권한이 커지고 있음을 알 수 있다.
+
+### Generator
+
+제너레이터는 위의 이터러블의 생성과정을 쉽게 가능하게 해준다. 제너레이터를 호출할때마다 이터레이터 가 만들어진다. 근데 이 이터레이터는 이터러블이기도 하다. 제너레이터에는 yield 가 있는데, 특이한 녀석이다.
+iteratorResultObject 를 yield 에서 return 해주고, next 를 호출하면 다시 다음 yield 까지 진행한다. 동기적 흐름을 멈추는(정확히는 가상 엔진에 의한) 과정을 서스펜션이라고 한다.
+
+```js
+const generator = function*(max){
+  let cursor = 0;
+  while(cursor < max){
+    yield cursor * cursor;
+    cursor++;
+  }
+}
+
+console.log([...generator(5)]);
+
+
+```
+
+### complex recursion
+

@@ -13,6 +13,7 @@ const Operator = class {
   }
 };
 
+// 기본값을 처리한다
 const PrimaOp = class extends Operator {
   constructor(v) {
     super(v);
@@ -22,6 +23,7 @@ const PrimaOp = class extends Operator {
   }
 };
 
+// 배열처리
 const ArrayOp = class extends Operator {
   constructor(v) {
     super(v);
