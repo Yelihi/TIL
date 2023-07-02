@@ -11,6 +11,8 @@ function intersectSets(setA, setB) {
   return intersect;
 }
 
+console.log(intersectSets(new Set([1, 1, 2, 2, 3]), new Set([1, 2, 2, 4, 5])));
+
 // 상위 집합 확인
 
 function isSuperSet(setA, superSet) {
