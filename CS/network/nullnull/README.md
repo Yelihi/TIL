@@ -75,3 +75,8 @@
 - segment 는 packet 의 내용물이라 생각하자.
 - 즉, segment 가 payload 가 되는셈이다.
 - segment 는 L4, packet 은 L3, frame 은 L2
+
+### L2 스위치
+
+- MAC 주소가 속한 L2. 따라서 MAC 주소로 스위칭 하는것이다.
+- 
