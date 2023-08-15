@@ -53,4 +53,4 @@ flex 에서 wrap 과 nowrap 의 상황에 따라서 align-items, align-content �
 
 <br />
 
-[codeResult]("./images/flex-grow-1.png")
+<img src="./images/flex-grow-1.png" alt="flex-grow">
