@@ -79,4 +79,50 @@
 ### L2 스위치
 
 - MAC 주소가 속한 L2. 따라서 MAC 주소로 스위칭 하는것이다.
-- 
+- Mac 주소는 거진 유일하다고 생각하면 된다. (48bit)
+- L2 Access 스위치는 pc 와 가장 인접한 스위치(End point[컴퓨터]와 가장 인접한)
+- L2 Distribution 스위치는 스위치를 위한 스위치라고 생각할 수 있으며, 다른 pc 나 라우터와 연결될 수 있다. 그래서 요건 Access 와 연결되는 것이다.
+- Uplink : L2 Access -> L2 Distribution (상위 계층 스위치로 연결되는 것)
+  - Link - up : 렌 케이블과 연결됨 (초록불) ... 햇갈리지말자
+
+### IP Header
+
+<img src="../images/ipHeader.png" alt="IP Header" />
+<br />
+
+- IHL(IP Header Length) : 헤더의 길이로 보통 5 (그래야 5 \* 4byte = 20byte)
+- 32bit = 4byte
+- Identification : 단편화에 대한 정보. 보통 MTU 는 1500 인데, 간혹 패킷 최대용량이 1400 인 곳이 있고 이러한 부분에 대해서 패킷전송의 순서를 정할 때 사용
+- TTL(Time To Live) : 패킷의 생존 횟수. 패킷은 라우터를 따라 이동하는데, 하나의 라우터를 이동할 때마다 TTL 이 1씩 감소한다. TTL 은 0~255 까지의 갯수이므로 총 256 번 라우터를 이동할 수 있다.
+- 그 외 출발지 IP, 도착지 IP 가 나타나있다.
+
+### wireshark의 작동 구조와 원리
+
+<img src="../images/whireshark.png" alt="whireshark" />
+<br />
+
+- 패킷을 분석할 때 와이어샤크를 활용한다.
+- OSI 계층에서 패킷이 L2 를 넘어 전송이 되기 전, 의도적으로 패킷에 대한 filter 를 추가할 수 있다.
+- 이 filter 는 패킷을 그대로 전송시키는 Bypass, 걸러버리는 Drop 을 결정하게 된다.
+- 반면 filter 와 달리 Sencer 역시 추가할 수 있는데, 센서는 Bypass 만 가능하고, 센서의 주된 목적은 패킷의 감청에 있다.
+- 이렇게 감청된 패킷을 디코딩 하여 분석하는 것이 whireshark
+- 참고로 프레임이 외부 네트워크로 전달이 될 때를 Outbound 라고 하고 들어오는것을 Inbound 라고 한다.
+- 자신의 패킷 전송값을 감청하는것은 괜찮으나 그 외 사용은 법 위반이다.
+
+### Router의 내부 구조
+
+- 방화벽과 라우터는 모두 L3 스위치에 속하고, 이는 IP 로 통신을 한다
+- 내부적으로 라우터는 Bypass 인지 Drop 인지 결정하고 어디로 패킷을 보내줄 지 결정한다. 이러한 처리 과정을 inline 처리라고 한다
+- 패킷을 전송할 때, NIC 수준에서 바로 전송하느냐, IP수준에서 처리하느냐, 사용자 프로세서 수준에서 처리한 이후 전송하느냐에 따라 라우터의 처리속도가 달라진다.
+
+### Inline 과 Out of Path
+
+<img src="../images/inline&outofpath.png" alt="inline and Outofpath" />
+
+- inline 과 out of path 모두 packet 단위이다.
+- inline 이 고속도로로 진입하기 전 IC 및 터미널이라고 한다면 out of path 는 과속방지카메라와 같다.
+- 보통 out of path 는 스위치와 라우터 간 전송되는(inline) packet들을 특정 port 내 copy 한다. 이를 port mirroring 이라고 한다.
+- 이렇게 copy 를 하는것은 cpu 를 더 과도하게 사용할 수 있다. 그럼에도 이렇게 하는 이유는 말 그대로 '감시' 해야하기 때문이다
+- Sensor 로서 관리, 해킹감독 등등 여러 정보를 얻기 위해서 packet 을 copy 한다.
+
+### Proxy
