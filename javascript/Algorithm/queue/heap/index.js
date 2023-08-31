@@ -51,7 +51,10 @@ class MaxHeap {
     let currentIndex = 1;
     let leftIndex = 2;
     let rightIndex = 3;
-    while (this.heap[currentIndex] < this.heap[leftIndex] || this.heap[currentIndex] < this.heap[rightIndex]) {
+    while (
+      this.heap[currentIndex] < this.heap[leftIndex] ||
+      this.heap[currentIndex] < this.heap[rightIndex]
+    ) {
       if (this.heap[leftIndex] < this.heap[rightIndex]) {
         const temp = this.heap[currentIndex];
         this.heap[currentIndex] = this.heap[rightIndex];
@@ -78,6 +81,10 @@ heap.push(54);
 heap.push(27);
 heap.push(65);
 heap.push(89);
+
+heap.pop();
+console.log(heap.heap);
+heap.pop();
 console.log(heap.heap);
 
 class MinHeap {
@@ -108,7 +115,11 @@ class MinHeap {
     let leftIndex = 2;
     let rightIndex = 3;
 
-    while ((this.heap[leftIndex] && this.heap[currentIndex] > this.heap[leftIndex]) || (this.heap[rightIndex] && this.heap[currentIndex] > this.heap[rightIndex])) {
+    while (
+      (this.heap[leftIndex] &&
+        this.heap[currentIndex] > this.heap[leftIndex]) ||
+      (this.heap[rightIndex] && this.heap[currentIndex] > this.heap[rightIndex])
+    ) {
       if (this.heap[leftIndex] === undefined) {
         this._swap(rightIndex, currentIndex);
       } else if (this.heap[rightIndex] === undefined) {
