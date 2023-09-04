@@ -19,7 +19,9 @@ type ReturnTypeByInputType = {
   bool: boolean;
 };
 
-function getRandom<T extends "char" | "int" | "bool">(str: T): ReturnTypeByInputType[T] {
+function getRandom<T extends "char" | "int" | "bool">(
+  str: T
+): ReturnTypeByInputType[T] {
   if (str === "int") {
     // generate a random number
     return Math.floor(Math.random() * 10) as ReturnTypeByInputType[T]; // ❌ 'number' 타입은 'never'타입에 할당할 수 없다.
@@ -75,10 +77,23 @@ function run(dir: EDirection) {
 run(EDirection.Up);
 
 // 반면 객체는 이렇게 객체타입을 분리하여서 설정을 해주어야 한다.
-type Direction = typeof ODirection[keyof typeof ODirection];
+type Direction = (typeof ODirection)[keyof typeof ODirection];
 
 function run1(dir: Direction) {
   console.log(dir);
 }
 
 run1(ODirection.Up);
+
+type Fruit = "orange" | "lemon" | "banana";
+
+type Cart = { [key in Fruit]: Record<key, boolean> }[Fruit];
+
+type Info = {
+  name: string;
+  password: string;
+  confirm: boolean;
+  email: string;
+};
+
+type PartialInfo = { [key in keyof Info]: Record<key, Info[key]> }[keyof Info];

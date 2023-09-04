@@ -126,3 +126,13 @@
 - Sensor 로서 관리, 해킹감독 등등 여러 정보를 얻기 위해서 packet 을 copy 한다.
 
 ### Proxy
+
+- 앞서 배운 inline 과 out of path 모두 packet 이 데이터단위라면, proxy 는 user application proxy 라 표현하며 socket 에 의한 stream 데이터 단위를 다루게 된다.
+- 첫번째 활용 방안은 우회이다.
+- 단 주의할 점은, proxy pc 에서는 전송받는 stream 데이터를 읽는것이 가능하기에 정보가 유출될 수 있다.
+  <br />
+
+<img src="../images/proxy1.png" alt="proxy1" />
+<br />
+
+- 두번째 활용 방안은 분석이다.
