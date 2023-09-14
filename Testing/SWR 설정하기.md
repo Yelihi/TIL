@@ -90,3 +90,7 @@ export const renderWithProvider = (
 <br />
 
 위와 같이 설정해주고 테스트 렌더 함수를 render() ---> renderWithProvider() 로 변경해줌으로서 무리없이 테스트를 완료할 수 있었다.
+
+### 참고 문헌
+
+<a href="https://github.com/vercel/swr/discussions/617" target='_blank'>Test Cases for useSwr in jest</a>
