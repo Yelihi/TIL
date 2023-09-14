@@ -93,4 +93,4 @@ export const renderWithProvider = (
 
 ### 참고 문헌
 
-<a href="https://github.com/vercel/swr/discussions/617" target='_blank'>Test Cases for useSwr in jest</a>
+<a href="https://github.com/vercel/swr/discussions/617" target="_blank" >Test Cases for useSwr in jest</a>
