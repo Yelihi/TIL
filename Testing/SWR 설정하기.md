@@ -94,3 +94,4 @@ export const renderWithProvider = (
 ### 참고 문헌
 
 <a href="https://github.com/vercel/swr/discussions/617" target="_blank" >Test Cases for useSwr in jest</a>
+<a href="https://github.com/vercel/swr/issues/781" target="_blank" >SWR cache persistent across tests even with cache clearing and deduping interval at 0</a>
