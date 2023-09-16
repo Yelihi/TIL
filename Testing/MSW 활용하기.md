@@ -90,3 +90,7 @@ afterAll(() => {
 <br />
 
 브라우저의 경우 셋팅을 따로 해주어야 하는데, 이는 추후에 다시 알아보도록 하자
+
+### 참고 문헌
+
+<a href="https://www.fronttigger.dev/2022/react/msw-test" target="_blank" >MSW를 활용해 프론트엔드 테스트하기 (feat. Jest)</a>
