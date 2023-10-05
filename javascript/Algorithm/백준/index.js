@@ -23,3 +23,99 @@
 // const [n, ...arr] = input;
 
 // 디 버그 할때 : node index
+
+class Node {
+  constructor(value) {
+    this.value = value;
+    this.next = null;
+    this.prev = null;
+  }
+}
+
+class Queue {
+  constructor() {
+    this.dummyHead = new Node();
+    this.dummyTail = new Node();
+    this.dummyHead.prev = this.dummyTail;
+    this.dummyTail.next = this.dummyHead;
+    this.length = 0;
+  }
+
+  enqueue(value) {
+    const node = new Node(value);
+    const prevLast = this.dummyTail.next;
+
+    prevLast.prev = node;
+
+    node.prev = this.dummyTail;
+    node.next = prevLast;
+    this.dummyTail.next = node;
+    this.length++;
+    return;
+  }
+
+  dequeue() {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    const node = this.dummyHead.prev;
+    const newHead = node.prev;
+
+    this.dummyHead.prev = newHead;
+    node.next = null;
+    node.prev = null;
+    newHead.next = this.dummyHead;
+    this.length--;
+    return newHead.value;
+  }
+
+  front() {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    return this.dummyHead.prev.value;
+  }
+
+  back() {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+
+    return this.dummyTail.next.value;
+  }
+
+  overview() {
+    if (this.isEmpty()) {
+      return undefined;
+    }
+    const queue = [];
+
+    let node = this.dummyHead;
+    while (node !== this.dummyTail) {
+      let prevNode = node.prev;
+      if (prevNode.value === undefined) break;
+      queue.push(prevNode.value);
+      node = prevNode;
+    }
+
+    return queue;
+  }
+
+  isEmpty() {
+    return this.length === 0;
+  }
+}
+
+const queue = new Queue();
+
+[1, 3, 4, 5, 6, 7, 8, 9, 10].forEach((elem) => {
+  queue.enqueue(elem);
+});
+
+console.log(queue.front());
+console.log(queue.back());
+console.log(queue.overview());
+console.log(queue.dequeue());
+console.log(queue.overview());
