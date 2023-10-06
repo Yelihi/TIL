@@ -56,7 +56,6 @@ function getCombinations(n, arr) {
       for (let i = s; i < arr.length; i++) {
         // temp[L] 현재 레벨 맞는 숫자를 넣어준다.
         temp[L] = arr[i];
-        console.log(temp);
 
         // 레벨 +1, for() 시작번호 +1을 하고 DFS 재귀함수를 호출한다.
         // 레벨이 n과 같아지면 answer에 push후 종료할 것이고

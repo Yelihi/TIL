@@ -23,22 +23,3 @@
 // const [n, ...arr] = input;
 
 // 디 버그 할때 : node index
-
-function getCombination(n, array) {
-  const results = [];
-
-  const temp = new Array(n);
-
-  function DFS(L, s) {
-    if (L === n) {
-      results.push(temp.slice());
-    } else {
-      for (let i = s; i < n; i++) {
-        temp[L] = array[i];
-
-        DFS(L + 1, i + 1);
-      }
-    }
-  }
-  DFS(0, 0);
-}
