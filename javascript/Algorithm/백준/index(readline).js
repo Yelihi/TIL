@@ -63,3 +63,17 @@
 //   solution(list1, list2);
 //   process.exit();
 // });
+
+const sol = (input) => {};
+
+// 백준에서 입력을 받는 코드
+const input = [];
+require("readline")
+  .createInterface(process.stdin, process.stdout)
+  .on("line", (line) => {
+    input.push(line);
+  })
+  .on("close", () => {
+    console.log(sol(input));
+    process.exit();
+  });
