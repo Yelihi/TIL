@@ -61,29 +61,6 @@ combinations.forEach((combination) => {
       sum += land[nx][ny];
       visit[nx][ny] = 1;
     }
-    // if (x + 1 < range && x - 1 > -1 && y + 1 < range && y - 1 > -1) {
-    //   if (
-    //     visit[x][y] ||
-    //     visit[x - 1][y] ||
-    //     visit[x + 1][y] ||
-    //     visit[x][y - 1] ||
-    //     visit[x][y + 1]
-    //   )
-    //     return;
-    //   count++;
-    //   sum += land[x][y];
-    //   sum += land[x - 1][y];
-    //   sum += land[x + 1][y];
-    //   sum += land[x][y - 1];
-    //   sum += land[x][y + 1];
-    //   visit[x][y] = 1;
-    //   visit[x - 1][y] = 1;
-    //   visit[x + 1][y] = 1;
-    //   visit[x][y - 1] = 1;
-    //   visit[x][y + 1] = 1;
-    // } else {
-    //   return;
-    // }
   });
 
   if (count === 15) {
