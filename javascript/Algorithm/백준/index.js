@@ -25,47 +25,63 @@
 // 디 버그 할때 : node index
 
 const fs = require("fs");
-const input = fs.readFileSync("/dev/stdin").toString().trim().split(/\s+/);
-const [n, ...arr] = input;
+const input = fs
+  .readFileSync(__dirname + "/index.txt")
+  .toString()
+  .trim()
+  .split("\n");
 
-const range = Number(n);
+const iterator = input[Symbol.iterator]();
 
-let max = "";
-let min = "";
+let M, N, K;
+let graph, visited, cnt;
 
-const visited = new Array(10).fill(0);
+const dx = [-1, 1, 0, 0];
+const dy = [0, 0, -1, 1];
 
-function DFS(L, prev, result) {
-  if (L === range) {
-    max = result > max ? result : max;
-    min = result < min ? result : min;
-    return;
-  }
+let rotate = iterator.next().value;
 
-  if (arr[L] === "<") {
-    for (let i = prev + 1; i < 10; i++) {
-      if (visited[i]) continue;
-      visited[i] = 1;
-      DFS(L + 1, i, result + i);
-      visited[i] = 0;
-    }
-  } else {
-    for (let i = prev - 1; i > -1; i--) {
-      if (visited[i]) continue;
-      visited[i] = 1;
-      DFS(L + 1, i, result + i);
-      visited[i] = 0;
+function dfs(x, y) {
+  visited[x][y] = 1;
+  for (let i = 0; i < 4; i++) {
+    const nx = x + dx[i];
+    const ny = y + dy[i];
+    if (nx < 0 || ny < 0 || nx >= M || ny >= N || visited[nx][ny]) continue;
+    if (graph[nx][ny] === 1) {
+      dfs(nx, ny);
     }
   }
-
-  return;
 }
 
-for (let i = 0; i < 10; i++) {
-  visited[i] = 1;
-  DFS(0, i, `${i}`);
-  visited[i] = 0;
-}
+for (let i = 0; i < rotate; i++) {
+  // M, N, K 입력받기
+  [M, N, K] = iterator
+    .next()
+    .value.split(" ")
+    .map((v) => Number(v));
+  // graph, visited 초기값 생성하기
+  graph = Array.from(Array(M), () => new Array(N).fill(0));
+  visited = Array.from(Array(M), () => new Array(N).fill(0));
 
-console.log(max);
-console.log(min);
+  // 순차적으로 입력값 받아 배추 심기
+  for (let i = 0; i < K; i++) {
+    const [x, y] = iterator
+      .next()
+      .value.split(" ")
+      .map((v) => Number(v));
+    graph[x][y] = 1;
+  }
+
+  cnt = 0;
+  // dfs 를 통해 전체 graph 를 순회하며, dfs를 실행 (dfs 실행 시 cnt 1씩 증가)
+  for (let i = 0; i < M; i++) {
+    for (let j = 0; j < N; j++) {
+      if (graph[i][j] == 1 && !visited[i][j]) {
+        dfs(i, j);
+        cnt++;
+      }
+    }
+  }
+
+  console.log(cnt);
+}
