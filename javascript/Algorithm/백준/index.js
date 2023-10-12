@@ -24,64 +24,8 @@
 
 // 디 버그 할때 : node index
 
-const fs = require("fs");
-const input = fs
-  .readFileSync(__dirname + "/index.txt")
-  .toString()
-  .trim()
-  .split("\n");
+// getCombination 구현
 
-const iterator = input[Symbol.iterator]();
+// 다만 getCombination 에서 L === selected 가 되었을 때, 이 때 temp 의 전체 합이 S 가 되는지 판단하는게 좋겠다
 
-let M, N, K;
-let graph, visited, cnt;
-
-const dx = [-1, 1, 0, 0];
-const dy = [0, 0, -1, 1];
-
-let rotate = iterator.next().value;
-
-function dfs(x, y) {
-  visited[x][y] = 1;
-  for (let i = 0; i < 4; i++) {
-    const nx = x + dx[i];
-    const ny = y + dy[i];
-    if (nx < 0 || ny < 0 || nx >= M || ny >= N || visited[nx][ny]) continue;
-    if (graph[nx][ny] === 1) {
-      dfs(nx, ny);
-    }
-  }
-}
-
-for (let i = 0; i < rotate; i++) {
-  // M, N, K 입력받기
-  [M, N, K] = iterator
-    .next()
-    .value.split(" ")
-    .map((v) => Number(v));
-  // graph, visited 초기값 생성하기
-  graph = Array.from(Array(M), () => new Array(N).fill(0));
-  visited = Array.from(Array(M), () => new Array(N).fill(0));
-
-  // 순차적으로 입력값 받아 배추 심기
-  for (let i = 0; i < K; i++) {
-    const [x, y] = iterator
-      .next()
-      .value.split(" ")
-      .map((v) => Number(v));
-    graph[x][y] = 1;
-  }
-
-  cnt = 0;
-  // dfs 를 통해 전체 graph 를 순회하며, dfs를 실행 (dfs 실행 시 cnt 1씩 증가)
-  for (let i = 0; i < M; i++) {
-    for (let j = 0; j < N; j++) {
-      if (graph[i][j] == 1 && !visited[i][j]) {
-        dfs(i, j);
-        cnt++;
-      }
-    }
-  }
-
-  console.log(cnt);
-}
+// 그래서 맞으면 cnt 를 1씩 증가시키고 아니면 그냥 return 하기.
