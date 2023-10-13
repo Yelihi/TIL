@@ -1,8 +1,6 @@
 class QuickUnion {
   constructor(length) {
-    this.Id = Arrray(length)
-      .fill(0)
-      .map((_, i) => i);
+    this.Id = new Array(length).fill(0).map((_, i) => i);
   }
 
   root(i) {
@@ -15,8 +13,26 @@ class QuickUnion {
   }
 
   union(p, q) {
-    const i = root(p);
-    const j = root(q);
-    id[i] = j;
+    const i = this.root(p); // 5
+    const j = this.root(q); // 5
+    if (i < j) {
+      this.Id[j] = i;
+    } else {
+      this.Id[i] = j;
+    }
   }
 }
+
+const union = new QuickUnion(7);
+union.union(1, 2);
+console.log(union);
+union.union(2, 5);
+console.log(union);
+union.union(5, 1);
+console.log(union);
+union.union(3, 4);
+union.union(4, 6);
+
+let count = 0;
+
+console.log(union);
