@@ -29,44 +29,10 @@ const input = fs
   .readFileSync(__dirname + "/index.txt")
   .toString()
   .trim()
-  .split(/\s/);
+  .split(/\n/);
 
 const [n, ...arr] = input;
 const N = Number(n);
 
-const visited = new Array(10).fill(0);
-
-let min = String(Number.MAX_SAFE_INTEGER);
-let max = String(Number.MIN_SAFE_INTEGER);
-
-function DFS(L, start, sum) {
-  if (L === N) {
-    min = sum < min ? sum : min;
-    max = sum > max ? sum : max;
-  } else {
-    if (arr[L] === "<") {
-      for (let i = start + 1; i < 10; i++) {
-        if (visited[i]) continue;
-        visited[i] = 1;
-        DFS(L + 1, i, sum + i);
-        visited[i] = 0;
-      }
-    } else {
-      for (let i = start - 1; i > -1; i--) {
-        if (visited[i]) continue;
-        visited[i] = 1;
-        DFS(L + 1, i, sum + i);
-        visited[i] = 0;
-      }
-    }
-  }
-}
-
-for (let i = 0; i < 10; i++) {
-  visited[i] = 1;
-  DFS(0, i, `${i}`);
-  visited[i] = 0;
-}
-
-console.log(min);
-console.log(max);
+const land = arr.map((row) => row.split(" ").map((cell) => Number(cell)));
+console.log(land);
