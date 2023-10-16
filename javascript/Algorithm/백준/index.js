@@ -35,4 +35,14 @@ const [n, ...arr] = input;
 const N = Number(n);
 
 const land = arr.map((row) => row.split(" ").map((cell) => Number(cell)));
-console.log(land);
+
+const dx = [-1, 1, 0, 0, 0];
+const dy = [0, 0, -1, 1, 0];
+
+// visited 가 필요하다. 다만 계속 초기화를 해주어야 하기에 루트 안에서 해야될듯 싶다.
+
+// visited 의 일정 범위 한정으로 씨앗이 심겨지며, combination 으로 구해진 조합을 통해 dfs 로 탐구한다.
+
+function boundary(x, y){
+  
+}
