@@ -24,25 +24,33 @@
 
 // 디 버그 할때 : node index
 
-const fs = require("fs");
-const input = fs
-  .readFileSync(__dirname + "/index.txt")
-  .toString()
-  .trim()
-  .split(/\n/);
+// 급할때 사용하는 버전
 
-const [n, ...arr] = input;
-const N = Number(n);
+function BFS(graph, start, visited) {
+  // 전체 큐를 선언해준다
+  const queue = [];
+  // 탐색을 시작할 node 혹은 index 를 넣어준다
+  queue.push(start);
+  // 동시에 visited 역시 선언해준다(시작지점)
+  visited[start] = true;
 
-const land = arr.map((row) => row.split(" ").map((cell) => Number(cell)));
+  // queue 의 길이가 있을때까지
+  while (queue.length) {
+    // 맨 앞 요소를 빼준다
+    const v = queue.shift();
 
-const dx = [-1, 1, 0, 0, 0];
-const dy = [0, 0, -1, 1, 0];
-
-// visited 가 필요하다. 다만 계속 초기화를 해주어야 하기에 루트 안에서 해야될듯 싶다.
-
-// visited 의 일정 범위 한정으로 씨앗이 심겨지며, combination 으로 구해진 조합을 통해 dfs 로 탐구한다.
-
-function boundary(x, y){
-  
+    // 맨 앞 요소와 연결된 나머지 노드들을 순회를 돌아준다
+    for (const node of graph[v]) {
+      // 방문하지 않았다면
+      if (!visited[v]) {
+        // node를 queue 에 추가해준다
+        queue.push(node);
+        // 방문 처리를 해준다
+        visited[node] = true;
+      }
+    }
+  }
 }
+
+// 다만 queue 를 생성하여 해주는것이 좀 더 효율부분에 있어서 이득이 있다. 다만, 급할때는 그냥 배열로라도 하는게 좋다
+// Queue 를 클래스로 선언했다면 메서드로 enqueue, dequeue 가 있을 것이다. 이를 위 push, shift 에 활용해주면 되고 size 메서드를 통해 queue.length 를 대신해주면 된다
