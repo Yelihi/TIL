@@ -26,31 +26,43 @@
 
 // 급할때 사용하는 버전
 
-function BFS(graph, start, visited) {
-  // 전체 큐를 선언해준다
-  const queue = [];
-  // 탐색을 시작할 node 혹은 index 를 넣어준다
-  queue.push(start);
-  // 동시에 visited 역시 선언해준다(시작지점)
-  visited[start] = true;
+function ThreeSum(array, target) {
+  const answer = [];
+  const sortedArray = array.sort((a, b) => a - b);
+  let start, end;
 
-  // queue 의 길이가 있을때까지
-  while (queue.length) {
-    // 맨 앞 요소를 빼준다
-    const v = queue.shift();
-
-    // 맨 앞 요소와 연결된 나머지 노드들을 순회를 돌아준다
-    for (const node of graph[v]) {
-      // 방문하지 않았다면
-      if (!visited[v]) {
-        // node를 queue 에 추가해준다
-        queue.push(node);
-        // 방문 처리를 해준다
-        visited[node] = true;
+  for (let i = 0; i < sortedArray.length; i++) {
+    let a = sortedArray[i];
+    start = i + 1;
+    end = sortedArray.length - 1;
+    while (start < end) {
+      let b = sortedArray[start];
+      let c = sortedArray[end];
+      if (a + b + c === target) {
+        answer.push([a, b, c]);
+        start += 1;
+        end -= 1;
+      } else if (a + b + c > target) {
+        end -= 1;
+      } else if (a + b + c < target) {
+        start += 1;
       }
     }
   }
 }
 
-// 다만 queue 를 생성하여 해주는것이 좀 더 효율부분에 있어서 이득이 있다. 다만, 급할때는 그냥 배열로라도 하는게 좋다
-// Queue 를 클래스로 선언했다면 메서드로 enqueue, dequeue 가 있을 것이다. 이를 위 push, shift 에 활용해주면 되고 size 메서드를 통해 queue.length 를 대신해주면 된다
+function binarySearch(array, target) {
+  let startIndex = 0;
+  let lastIndex = array.length - 1;
+  let midIndex = startIndex + (lastIndex - startIndex) / 2;
+  while (startIndex < lastIndex) {
+    if (array[midIndex] > target) {
+      lastIndex = midIndex;
+    } else if (array[midIndex] < target) {
+      startIndex = midIndex;
+    } else {
+      return midIndex;
+    }
+  }
+  return -1;
+}

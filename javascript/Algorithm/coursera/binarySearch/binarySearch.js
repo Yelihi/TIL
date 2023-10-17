@@ -4,7 +4,7 @@ function binarySearch(array, key) {
   while (leftIndex <= rightIndex) {
     let midIndex = leftIndex + (rightIndex - leftIndex) / 2;
     if (array[midIndex] > key) rightIndex = midIndex;
-    else if (array[midIndex] < midIndex) leftIndex = midIndex;
+    else if (array[midIndex] < key) leftIndex = midIndex;
     else return midIndex;
   }
   return -1;
