@@ -26,43 +26,32 @@
 
 // 급할때 사용하는 버전
 
-function ThreeSum(array, target) {
-  const answer = [];
-  const sortedArray = array.sort((a, b) => a - b);
-  let start, end;
+// 플로이드 마샬 알고리즘
 
-  for (let i = 0; i < sortedArray.length; i++) {
-    let a = sortedArray[i];
-    start = i + 1;
-    end = sortedArray.length - 1;
-    while (start < end) {
-      let b = sortedArray[start];
-      let c = sortedArray[end];
-      if (a + b + c === target) {
-        answer.push([a, b, c]);
-        start += 1;
-        end -= 1;
-      } else if (a + b + c > target) {
-        end -= 1;
-      } else if (a + b + c < target) {
-        start += 1;
+const fs = require("fs");
+const input = fs
+  .readFileSync(__dirname + "/index.txt")
+  .toString()
+  .trim()
+  .split(/\n/);
+
+const [n, ...arr] = input;
+const N = Number(n);
+const graph = arr.map((row) => row.split(" ").map((cell) => Number(cell)));
+
+// 플로이드 마샬 알고리즘
+
+for (let k = 0; k < N; k++) {
+  for (let i = 0; i < N; i++) {
+    for (let j = 0; j < N; j++) {
+      if (graph[i][k] > 0 && graph[k][j] > 0) {
+        graph[i][j] = 1;
       }
     }
   }
 }
 
-function binarySearch(array, target) {
-  let startIndex = 0;
-  let lastIndex = array.length - 1;
-  let midIndex = startIndex + (lastIndex - startIndex) / 2;
-  while (startIndex < lastIndex) {
-    if (array[midIndex] > target) {
-      lastIndex = midIndex;
-    } else if (array[midIndex] < target) {
-      startIndex = midIndex;
-    } else {
-      return midIndex;
-    }
-  }
-  return -1;
+for (let i = 0; i < graph.length; i++) {
+  const row = graph[i].join(" ");
+  console.log(row);
 }
