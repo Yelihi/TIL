@@ -26,32 +26,75 @@
 
 // 급할때 사용하는 버전
 
-// 플로이드 마샬 알고리즘
-
 const fs = require("fs");
 const input = fs
   .readFileSync(__dirname + "/index.txt")
   .toString()
   .trim()
   .split(/\n/);
-
 const [n, ...arr] = input;
 const N = Number(n);
-const graph = arr.map((row) => row.split(" ").map((cell) => Number(cell)));
+const graph = arr.map((row) => row.split(" ").map((v) => Number(v)));
 
-// 플로이드 마샬 알고리즘
+const team = Array(N)
+  .fill(0)
+  .map((_, i) => i + 1);
 
-for (let k = 0; k < N; k++) {
-  for (let i = 0; i < N; i++) {
-    for (let j = 0; j < N; j++) {
-      if (graph[i][k] > 0 && graph[k][j] > 0) {
-        graph[i][j] = 1;
+// N 의 절반만큼 combination 한다.
+function getCombination(array, selected) {
+  const answer = [];
+
+  const temp = new Array(selected);
+
+  function dfs(L, s) {
+    if (L === selected) {
+      answer.push(temp.slice());
+    } else {
+      for (let i = s; i < array.length; i++) {
+        temp[L] = array[i];
+        dfs(L + 1, i + 1);
       }
     }
   }
+  dfs(0, 0);
+
+  return answer;
 }
 
-for (let i = 0; i < graph.length; i++) {
-  const row = graph[i].join(" ");
-  console.log(row);
+function getLink(array, team) {
+  const answer = [];
+  team.forEach((people) => {
+    if (!array.includes(people)) {
+      answer.push(people);
+    }
+  });
+  return answer;
 }
+
+function getSum(array) {
+  let sum = 0;
+  for (let i = 0; i < array.length; i++) {
+    for (let j = i; j < array.length; j++) {
+      let a = array[i] - 1;
+      let b = array[j] - 1;
+      sum += graph[a][b] + graph[b][a];
+    }
+  }
+  return sum;
+}
+
+const combinations = getCombination(team, N / 2);
+const start = combinations.slice(0, combinations.length / 2);
+
+// 스타트팀과 링크팀에 대해 합산을 계산한다
+let config = Number.MAX_SAFE_INTEGER;
+for (let i = 0; i < start.length; i++) {
+  const startTeam = start[i];
+  const linkTeam = getLink(startTeam, team);
+  const startSum = getSum(startTeam);
+  const linkSum = getSum(linkTeam);
+  const diff = Math.abs(startSum - linkSum);
+  config = Math.min(diff, config);
+}
+
+console.log(config);
