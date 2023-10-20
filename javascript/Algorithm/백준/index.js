@@ -32,69 +32,51 @@ const input = fs
   .toString()
   .trim()
   .split(/\n/);
-const [n, ...arr] = input;
-const N = Number(n);
-const graph = arr.map((row) => row.split(" ").map((v) => Number(v)));
+const iterator = input[Symbol.iterator]();
 
-const team = Array(N)
-  .fill(0)
-  .map((_, i) => i + 1);
+const T = Number(iterator.next().value);
 
-// N 의 절반만큼 combination 한다.
-function getCombination(array, selected) {
-  const answer = [];
+const dx = [-1, 1, 0, 0];
+const dy = [0, 0, -1, 1];
 
-  const temp = new Array(selected);
+let visited, N, M, K, graph;
 
-  function dfs(L, s) {
-    if (L === selected) {
-      answer.push(temp.slice());
-    } else {
-      for (let i = s; i < array.length; i++) {
-        temp[L] = array[i];
-        dfs(L + 1, i + 1);
+for (let i = 0; i < T; i++) {
+  [N, M, K] = iterator
+    .next()
+    .value.split(" ")
+    .map((v) => Number(v));
+  graph = Array.from(Array(N), () => new Array(M).fill(0));
+  visited = Array.from(Array(N), () => new Array(M).fill(0));
+
+  for (let j = 0; j < K; j++) {
+    const [y, x] = iterator
+      .next()
+      .value.split(" ")
+      .map((v) => Number(v));
+    graph[y][x] = 1;
+  }
+
+  let cnt = 0;
+  for (let a = 0; a < N; a++) {
+    for (let b = 0; b < M; b++) {
+      if (graph[a][b] == 1 && visited[a][b] == 0) {
+        dfs(a, b, visited);
+        cnt++;
       }
     }
   }
-  dfs(0, 0);
-
-  return answer;
+  console.log(cnt);
 }
 
-function getLink(array, team) {
-  const answer = [];
-  team.forEach((people) => {
-    if (!array.includes(people)) {
-      answer.push(people);
-    }
-  });
-  return answer;
-}
-
-function getSum(array) {
-  let sum = 0;
-  for (let i = 0; i < array.length; i++) {
-    for (let j = i; j < array.length; j++) {
-      let a = array[i] - 1;
-      let b = array[j] - 1;
-      sum += graph[a][b] + graph[b][a];
+function dfs(y, x, visited) {
+  visited[y][x] = 1;
+  for (let i = 0; i < 4; i++) {
+    const nx = x + dx[i];
+    const ny = y + dy[i];
+    if (nx < 0 || ny < 0 || nx >= M || ny >= N || visited[ny][nx]) continue;
+    if (graph[ny][nx] == 1) {
+      dfs(ny, nx, visited);
     }
   }
-  return sum;
 }
-
-const combinations = getCombination(team, N / 2);
-const start = combinations.slice(0, combinations.length / 2);
-
-// 스타트팀과 링크팀에 대해 합산을 계산한다
-let config = Number.MAX_SAFE_INTEGER;
-for (let i = 0; i < start.length; i++) {
-  const startTeam = start[i];
-  const linkTeam = getLink(startTeam, team);
-  const startSum = getSum(startTeam);
-  const linkSum = getSum(linkTeam);
-  const diff = Math.abs(startSum - linkSum);
-  config = Math.min(diff, config);
-}
-
-console.log(config);
