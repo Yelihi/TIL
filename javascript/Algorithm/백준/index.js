@@ -26,6 +26,45 @@
 
 // 급할때 사용하는 버전
 
+class QuickUnion {
+  constructor(length) {
+    this.Id = [null, ...new Array(length).fill(0).map((_, i) => i + 1)];
+    this.Sz = new Array(length + 1).fill(1);
+  }
+
+  root(p) {
+    while (p !== this.Id[p]) {
+      this.Id[p] = this.Id[this.Id[p]];
+      p = this.Id[p];
+    }
+    return p;
+  }
+
+  isSameRoot(p, q) {
+    return this.root(p) === this.root(q);
+  }
+
+  union(p, q) {
+    const i = this.root(p);
+    const j = this.root(q);
+    if (i === j) return;
+    if (this.Sz[i] < this.Sz[j]) {
+      this.Id[i] = j;
+      this.Sz[j] += this.Sz[i];
+    } else {
+      this.Id[j] = i;
+      this.Sz[i] += this.Sz[j];
+    }
+  }
+
+  connectArea() {
+    const [except, ...arr] = this.Id;
+    const roots = arr.map((id) => this.root(id));
+    const set = [...new Set(roots)];
+    return set;
+  }
+}
+
 const fs = require("fs");
 const input = fs
   .readFileSync(__dirname + "/index.txt")
@@ -34,49 +73,18 @@ const input = fs
   .split(/\n/);
 const iterator = input[Symbol.iterator]();
 
-const T = Number(iterator.next().value);
+const [N, M] = iterator
+  .next()
+  .value.split(" ")
+  .map((v) => Number(v));
+const graph = new QuickUnion(N);
 
-const dx = [-1, 1, 0, 0];
-const dy = [0, 0, -1, 1];
-
-let visited, N, M, K, graph;
-
-for (let i = 0; i < T; i++) {
-  [N, M, K] = iterator
+for (let i = 0; i < M; i++) {
+  const [p, q] = iterator
     .next()
     .value.split(" ")
     .map((v) => Number(v));
-  graph = Array.from(Array(N), () => new Array(M).fill(0));
-  visited = Array.from(Array(N), () => new Array(M).fill(0));
-
-  for (let j = 0; j < K; j++) {
-    const [y, x] = iterator
-      .next()
-      .value.split(" ")
-      .map((v) => Number(v));
-    graph[y][x] = 1;
-  }
-
-  let cnt = 0;
-  for (let a = 0; a < N; a++) {
-    for (let b = 0; b < M; b++) {
-      if (graph[a][b] == 1 && visited[a][b] == 0) {
-        dfs(a, b, visited);
-        cnt++;
-      }
-    }
-  }
-  console.log(cnt);
+  graph.union(p, q);
 }
 
-function dfs(y, x, visited) {
-  visited[y][x] = 1;
-  for (let i = 0; i < 4; i++) {
-    const nx = x + dx[i];
-    const ny = y + dy[i];
-    if (nx < 0 || ny < 0 || nx >= M || ny >= N || visited[ny][nx]) continue;
-    if (graph[ny][nx] == 1) {
-      dfs(ny, nx, visited);
-    }
-  }
-}
+console.log(graph.connectArea().length);
