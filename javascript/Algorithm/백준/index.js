@@ -26,68 +26,22 @@
 
 // 급할때 사용하는 버전
 
-const fs = require("fs");
-const input = fs
-  .readFileSync(__dirname + "/index.txt")
-  .toString()
-  .trim()
-  .split(/\n/);
-const iterator = input[Symbol.iterator]();
+function insertionSort(array) {
+  // 반복문을 통해 i = 1 부터 마지막까지 돌꺼임
+  for (let i = 1; i < array.length; i++) {
+    const temp = array[i];
+    let k = i - 1;
 
-const [N, M, V] = iterator
-  .next()
-  .value.split(" ")
-  .map((n) => Number(n));
-const graph = Array.from(Array(N + 1), () => []);
-let visited;
-const dfs = [];
-const bfs = [];
-
-for (let i = 0; i < M; i++) {
-  const [v1, v2] = iterator
-    .next()
-    .value.split(" ")
-    .map((v) => Number(v));
-  graph[v1].push(v2);
-  graph[v2].push(v1);
-  graph[v1].sort((a, b) => a - b);
-  graph[v2].sort((a, b) => a - b);
-}
-
-visited = new Array(N + 1).fill(0);
-
-function DFS(start, visited) {
-  dfs.push(start);
-  visited[start] = 1;
-  const arr = graph[start];
-  arr.forEach((num) => {
-    if (!visited[num]) {
-      DFS(num, visited);
+    while (k >= 0 && array[k] > temp) {
+      array[k + 1] = array[k];
+      k = k - 1;
     }
-  });
-}
-
-DFS(V, visited);
-
-visited = new Array(N + 1).fill(0);
-
-function BFS(start) {
-  bfs.push(start);
-  const queue = [start];
-  visited[start] = 1;
-  while (queue.length > 0) {
-    const vertex = queue.shift();
-    const arr = graph[vertex];
-    arr.forEach((num) => {
-      if (!visited[num]) {
-        visited[num] = 1;
-        queue.push(num);
-        bfs.push(num);
-      }
-    });
+    array[k + 1] = temp;
   }
+
+  return array;
 }
 
-BFS(V);
-console.log(dfs.join(" "));
-console.log(bfs.join(" "));
+const test = [2, 1, 5, 8, 4, 9];
+
+console.log(insertionSort(test));
