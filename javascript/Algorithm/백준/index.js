@@ -25,23 +25,3 @@
 // 디 버그 할때 : node index
 
 // 급할때 사용하는 버전
-
-function insertionSort(array) {
-  // 반복문을 통해 i = 1 부터 마지막까지 돌꺼임
-  for (let i = 1; i < array.length; i++) {
-    const temp = array[i];
-    let k = i - 1;
-
-    while (k >= 0 && array[k] > temp) {
-      array[k + 1] = array[k];
-      k = k - 1;
-    }
-    array[k + 1] = temp;
-  }
-
-  return array;
-}
-
-const test = [2, 1, 5, 8, 4, 9];
-
-console.log(insertionSort(test));
