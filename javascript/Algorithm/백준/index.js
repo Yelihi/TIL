@@ -25,3 +25,37 @@
 // 디 버그 할때 : node index
 
 // 급할때 사용하는 버전
+
+function maxHeap(array) {
+  let size = array.length;
+  for (let i = Math.floor(size / 2 - 1); i >= 0; i--) {
+    heapfiy(array, size, i);
+  }
+
+  for (let i = size - 1; i >= 0; i--) {
+    [array[0], array[i]] = [array[i], array[0]];
+    heapfiy(array, i, 0);
+  }
+
+  return array;
+}
+
+function heapfiy(arr, size, parentIdx) {
+  let largest = parentIdx;
+  const leftChildIdx = parentIdx * 2 + 1;
+  const rightChildIdx = parentIdx * 2 + 2;
+
+  if (leftChildIdx < size && arr[leftChildIdx] > arr[largest]) {
+    largest = leftChildIdx;
+  }
+
+  if (rightChildIdx < size && arr[rightChildIdx] > arr[largest]) {
+    largest = rightChildIdx;
+  }
+
+  if (parentIdx !== largest) {
+    [arr[parentIdx], arr[largest]] = [arr[largest], arr[parentIdx]];
+
+    heapfiy(arr, size, largest);
+  }
+}
