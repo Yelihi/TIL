@@ -26,36 +26,30 @@
 
 // 급할때 사용하는 버전
 
-function maxHeap(array) {
-  let size = array.length;
-  for (let i = Math.floor(size / 2 - 1); i >= 0; i--) {
-    heapfiy(array, size, i);
-  }
+const fs = require("fs");
+const input = fs
+  .readFileSync(__dirname + "/index.txt")
+  .toString()
+  .trim();
 
-  for (let i = size - 1; i >= 0; i--) {
-    [array[0], array[i]] = [array[i], array[0]];
-    heapfiy(array, i, 0);
-  }
+const N = Number(input);
 
-  return array;
-}
+dp = [];
 
-function heapfiy(arr, size, parentIdx) {
-  let largest = parentIdx;
-  const leftChildIdx = parentIdx * 2 + 1;
-  const rightChildIdx = parentIdx * 2 + 2;
+dp[1] = 0;
+dp[2] = 1;
+dp[3] = 1;
 
-  if (leftChildIdx < size && arr[leftChildIdx] > arr[largest]) {
-    largest = leftChildIdx;
-  }
-
-  if (rightChildIdx < size && arr[rightChildIdx] > arr[largest]) {
-    largest = rightChildIdx;
-  }
-
-  if (parentIdx !== largest) {
-    [arr[parentIdx], arr[largest]] = [arr[largest], arr[parentIdx]];
-
-    heapfiy(arr, size, largest);
+for (let i = 4; i <= N; i++) {
+  if (i % 3 == 0 && i % 2 == 0) {
+    dp[i] = Math.min(dp[i / 3] + 1, dp[i - 1] + 1, dp[i / 2] + 1);
+  } else if (i % 3 == 0) {
+    dp[i] = Math.min(dp[i / 3] + 1, dp[i - 1] + 1);
+  } else if (i % 2 == 0) {
+    dp[i] = Math.min(dp[i / 2] + 1, dp[i - 1] + 1);
+  } else {
+    dp[i] = dp[i - 1] + 1;
   }
 }
+
+console.log(dp[N]);
