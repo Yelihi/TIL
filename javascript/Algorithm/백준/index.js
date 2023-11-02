@@ -36,20 +36,14 @@ const N = Number(input);
 
 dp = [];
 
-dp[1] = 0;
-dp[2] = 1;
-dp[3] = 1;
+dp[1] = 1;
+dp[2] = 1; // 10
+dp[3] = 2; // 100, 101
 
-for (let i = 4; i <= N; i++) {
-  if (i % 3 == 0 && i % 2 == 0) {
-    dp[i] = Math.min(dp[i / 3] + 1, dp[i - 1] + 1, dp[i / 2] + 1);
-  } else if (i % 3 == 0) {
-    dp[i] = Math.min(dp[i / 3] + 1, dp[i - 1] + 1);
-  } else if (i % 2 == 0) {
-    dp[i] = Math.min(dp[i / 2] + 1, dp[i - 1] + 1);
-  } else {
-    dp[i] = dp[i - 1] + 1;
-  }
+// 파보나치 수열은 49번째항을 넘어가면 js 의 number 범위를 초과하기에 BigInt 를 써주자
+for (let i = 3; i <= 90; i++) {
+  dp[i] = BigInt(dp[i - 1]) + BigInt(dp[i - 2]);
 }
 
-console.log(dp[N]);
+// BigInt 는 뒤에 n 이라는 것이 붙기에 String 으로 변경해주자
+console.log(String(dp[N]));
