@@ -34,13 +34,12 @@ const input = fs
 
 const N = Number(input);
 
-const dp = [];
-dp[1] = 1;
-dp[2] = 1;
-dp[3] = 2;
+const dp = new Array(N + 1).fill(0).map((_, idx) => idx);
 
-for (let i = 4; i <= N; i++) {
-  dp[i] = BigInt(dp[i - 1]) + BigInt(dp[i - 2]);
+for (let i = 1; i <= N; i++) {
+  for (let j = 1; j ** 2 <= i; j++) {
+    dp[i] = Math.min(dp[i], dp[i - j ** 2] + 1);
+  }
 }
 
-console.log(String(dp[N]));
+console.log(dp[N]);
