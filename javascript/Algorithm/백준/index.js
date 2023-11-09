@@ -30,16 +30,32 @@ const fs = require("fs");
 const input = fs
   .readFileSync(__dirname + "/index.txt")
   .toString()
-  .trim();
+  .trim()
+  .split(/\n/);
 
-const N = Number(input);
+const [n, arr] = input;
+const N = Number(n);
+const NumberArray = arr.split(" ").map((v) => Number(v));
 
-const dp = new Array(N + 1).fill(0).map((_, idx) => idx);
+const dp = [];
 
-for (let i = 1; i <= N; i++) {
-  for (let j = 1; j ** 2 <= i; j++) {
-    dp[i] = Math.min(dp[i], dp[i - j ** 2] + 1);
+dp[0] = NumberArray[0];
+
+for (let i = 1; i < N; i++) {
+  let Sum = 0;
+  let j = i - 1;
+  while (j >= 0) {
+    if (NumberArray[j] < NumberArray[i]) {
+      Sum = Math.max(Sum, dp[j]);
+    }
+    j--;
   }
+  dp[i] = NumberArray[i] + Sum;
 }
 
-console.log(dp[N]);
+let answer = 0;
+for (const num of dp) {
+  answer = Math.max(answer, num);
+}
+
+console.log(answer);

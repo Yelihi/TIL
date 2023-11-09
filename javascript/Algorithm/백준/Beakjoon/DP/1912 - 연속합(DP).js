@@ -6,6 +6,7 @@ const input = fs
   .split(/\n/);
 
 const [n, arr] = input;
+
 const N = Number(n);
 const NumberArray = arr.split(" ").map((v) => Number(v));
 
@@ -14,23 +15,7 @@ const dp = [];
 dp[0] = NumberArray[0];
 
 for (let i = 1; i < N; i++) {
-  let Sum = 0;
-  let j = i - 1;
-  while (j >= 0) {
-    if (NumberArray[j] < NumberArray[i]) {
-      Sum = Math.max(Sum, dp[j]);
-    }
-    j--;
-  }
-  dp[i] = NumberArray[i] + Sum;
-}
-console.log(dp);
-
-let answer = 0;
-for (let num of dp) {
-  if (num > answer) {
-    answer = num;
-  }
+  dp[i] = Math.max(dp[i - 1] + NumberArray[i], NumberArray[i]);
 }
 
-console.log(answer);
+console.log(Math.max(...dp));
