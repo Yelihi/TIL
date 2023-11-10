@@ -33,29 +33,32 @@ const input = fs
   .trim()
   .split(/\n/);
 
-const [n, arr] = input;
-const N = Number(n);
-const NumberArray = arr.split(" ").map((v) => Number(v));
+const iterator = input[Symbol.iterator]();
+const N = Number(iterator.next().value);
 
-const dp = [];
+for (let i = 0; i < N; i++) {
+  const row = Number(iterator.next().value);
 
-dp[0] = NumberArray[0];
+  const top = iterator
+    .next()
+    .value.split(" ")
+    .map((v) => Number(v));
+  const bottom = iterator
+    .next()
+    .value.split(" ")
+    .map((v) => Number(v));
 
-for (let i = 1; i < N; i++) {
-  let Sum = 0;
-  let j = i - 1;
-  while (j >= 0) {
-    if (NumberArray[j] < NumberArray[i]) {
-      Sum = Math.max(Sum, dp[j]);
-    }
-    j--;
+  const dp = Array.from(Array(3), () => []);
+
+  dp[0][0] = top[0];
+  dp[1][0] = bottom[0];
+  dp[2][0] = 0;
+
+  for (let j = 1; j < row; j++) {
+    dp[0][j] = Math.max(dp[1][j - 1], dp[2][j - 1]) + top[j];
+    dp[1][j] = Math.max(dp[0][j - 1], dp[2][j - 1]) + bottom[j];
+    dp[2][j] = Math.max(dp[0][j - 1], dp[1][j - 1]);
   }
-  dp[i] = NumberArray[i] + Sum;
-}
 
-let answer = 0;
-for (const num of dp) {
-  answer = Math.max(answer, num);
+  console.log(Math.max(dp[0][row - 1], dp[1][row - 1], dp[2][row - 1]));
 }
-
-console.log(answer);
