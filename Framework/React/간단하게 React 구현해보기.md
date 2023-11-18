@@ -1,4 +1,4 @@
-### React 를 구현을 해보자
+## React 를 구현을 해보자
 
 <p>많은 회사들이 react 를 기반으로 서비스를 운영중이기에, javascript 와 더불어 react 역시 좀 더 깊게 파고들어서 학습할 필요가 있다. 학습에 어려운 측면이라고 한다면 자유도가 높다는 점이 적용되기도 한다. 즉 최적의 아키텍쳐가 무엇인가에 대해 고민이 생긴다. 이 과정에서 라이브러리를 분석하는 방법도 있지만, 규모 자체가 워낙 커서 쉽지않고, 대신 기본 개념을 익히기 위해서 직접 만들어 보는것은 가능할 것 같다.</p><br />
 
@@ -73,7 +73,12 @@ export function createElement(tagName, props, ...chidren) {
 - return 값은 위에서 만든 가상돔과 일치 한다. 실제 children 을 보게 되면 마치 이렇게 되는 것이다.
 
 ```js
-createElement("div", null, createElement("h2", null, "정말 동작할까"), createElement("p", null, "한번 확인해보자"));
+createElement(
+  "div",
+  null,
+  createElement("h2", null, "정말 동작할까"),
+  createElement("p", null, "한번 확인해보자")
+);
 ```
 
 - 재귀적으로 호출이 된다고 생각하면 된다.
@@ -382,42 +387,3 @@ function RenderFunctionComponent() {
 - 즉, 올바른 이전 상태값을 가리키지 않는다. (실제로 리엑트에서는 이미 에러가 떳을 것이다.)
 
 <p>결론을 요약하자면, 리엑트의 함수 컴포넌트에서 이전 상태값을 저장할 수 있는 방법인 hook 의 등장으로 기존 클래스 컴포넌트에서 더 직관적이고 가독성이 좋은 함수 컴포넌트로의 이동이 활발해졌다. 이러한 hook 의 상태 저장 원리는 외부 배열의 인덱스를 이용하는것이었고, 그렇기에 리엑트내에서 말하는 hook 의 규칙을 잘 지키도록 해야한다.</p>
-
-### useConfirm 커스텀 훅
-
-<p>버튼 이벤트 발동 시 사용자에게 한번 더 확인을 해야할 때가 있다. 예를 들면 데이터를 삭제하려고 한다면, 한번 더 삭제 여부를 물어봐야 하는 것이다. 실수로 삭제버튼을 그냥 눌러버릴 수 있으니 말이다. 커스텀한 알림창을 사용하는 것이라면 따로 component 를 랜더링 하고, 그 다음 확인과 취소버튼에 실제 이벤트를 발동시키면 되겠지만, 간단하게 알림창을 뛰우고 싶다면 window.confirm(message) 를 조건식으로 활용하면 된다.</p>
-
-```ts
-import React, { useCallback } from "react";
-
-const useConfirm = (description: string, onSubmit: () => void, onCencel: () => void) => {
-  const confirm = useCallback(() => {
-    if (window.confirm(description)) {
-      onSubmit();
-    } else {
-      onCencel();
-    }
-  }, [description, onSubmit, onCencel]);
-
-  return confirm;
-};
-
-export default useConfirm;
-```
-
-- 조건식응로 window.confirm(message) 를 통해 message 를 알림창에서 사용자에게 전달하고, 확인을 누르면 onSubmit, 취소라면 onCencel 이 실행된다
-- 이를 좀 더 간단하게 사용하기 위해서 커스텀 훅을 제작하며, useCallback 으로 내부 함수를 캐싱화 시켜줄 수 있다.
-
-### 리엑티브와 리엑트
-
-<p>자바스크립트로 웹페이지를 구현할 때를 살펴보면 보통, 데이터의 변화가 발생시(Model) 이를 적절히 조치하여(Controler) 실제 화면을 다시 그려준다(View). 즉 model 이 변화하였으면 반드시 view 를 변화시켜주어야 한다. 이 과정보다 더 단순하고 간략한 과정이 있지 않을까 고민 끝에, model 을 변화해줌으로서 자동적으로 view 에 변화가 일어날 수 있도록 view 가 model 의 특정 값에 의존하는 과정을 구현하였고, 이를 리엑티브라고 한다. 리엑트는 이러한 리엑티브 반응을 이용하여 쉽게 UI 설계를 가능하게 해주는 라이브러리 이다.</p><br />
-
-<p>또한 개발자들이 고민한 것은, DOM API 의 사용빈도였다. 어떠한 model 의 데이터값이 변화하고, 데이터값을 View 에 적용할 때마다 DOM API 를 호출했어야 했다. 웹 페이지에서는 수시로 이벤트가 발생하고 그로인해 DOM API 는 수시로 호출되게 된다. 이 호출의 빈도를 낮추어야 하는데, 그 이유는 한번 호출될 때마다 브라우저는 렌더링의 과정을 다시 거치기 때문이다. 렌더링의 과정은 DOM, CSSOM 을 통한 랜더트리형성 이후 viewport 에 맞추는 레이아웃작업을 거쳐 실제 pixel 로 paint 하는 과정을 거치게 된다. 가벼운 작업은 아니기 때문에 이를 최소화 하는것이 좋은데, 개발자들은 여기에 가상돔 이라는 개념을 통해 이를 해결하고자 하였다. 즉 실제 돔에 DOM API 를 적용하기 전에 먼저 가상돔을 비슷하게 생성하여, 실제 돔과의 비교를 통해 변경된 부분만을 실제돔의 API 를 호출하는 방식이다. 리엑트는 이러한 가상돔을 활용한 라이브러리이다.</p><br />
-
-<p>리엑트는 React 라는 라이브러리를 먼저 import 해야한다. 이렇게 하면 React 라는 실제 모듈을 사용할 수 있는데, 그 중 React.createElement 를 통해 가상돔 내 요소를 생성할 수 있게 된다. document.createElement 와는 차이점이 있는데, React.createElement 에서 생성된 요소는 순수 객체이다. DOM API 를 통해 생성된 요소와는 차이점이 있다. 실제 document.createElement 를 통해 생성된 노드는 HTMLElement 를 프로토타입으로 가지고 있다. 반면 가상돔에 사용될 React.createElement 는 Object 를 프로토타입으로 가지고 있다. 이러한 특징은 리엑트가 비단 브라우저만을 위한 라이브러리에 종속되지 않게 만들어준다. 실제 모바일 환경에서 사용하게 되는 React Native 가 하나의 예시이다.</p><br />
-
-<p>가상돔의 요소를 생성하였다면 이제 이 가상돔을 실제돔과 비교하여 변경된 사항은 실제돔에 적용시켜주어야 한다. 즉, 가상돔을 기반으로 실제 돔의 API 를 호출하는 역할을 React DOM 이 처리한다. 그래서 같이 import 해주어야 한다.</p><br />
-
-<p>Class 문법을 사용할 시, 만일 ES6 를 지원하지 않는 브라우저라면 다른 방향으로 리엑트를 작성해야한다. 실제 공식문서에서도 이러한 방식을 제공해주고 있지만, 한계가 있기에 우리는 babel 트랜스파일러를 사용해야한다. 최신 문법으로 작성해도 브라우저 환경에 따라 그에 맞는 문법으로 자동 변경시켜주기에 아주 편하다. 뿐만 아니라 babel 은 리엑트에서는 지원하지 않는 템플릿 언어를 사용할 수 있도록 해준다. 자바스크립트 확장문법인 JSX 를 사용할 수 있는데, 이를 통해 흔히 우리가 html 을 작성하듯이 가상 요소를 작성할 수 있게 되어 아주 편안해진다.</p><br />
-
-<p>요약하자면 리엑트는 리엑티브의 성질을 적용시킨 라이브러리이며, 리엑트를 사용하기 위해선 React, React Dom, babel 을 기본으로 설정해주어야 한다.</p>
