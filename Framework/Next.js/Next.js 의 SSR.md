@@ -6,7 +6,9 @@
 
 이와 달리 초반 페이지의 브라우저 렌더링 까지의 시간 단축부분은 SSR의 장점이라고 할 수 있다(물론 검색 엔진 부분도 여전히 강점이다). 기존 React 방식은 모든 렌더링 처리를 하나의 페이지내에서 자바스크립트 파일을 실행시켜서 상황에 맞게 렌더링을 진행하게 된다. <br />
 
-<img src='./images/CSR.png' alt="csr" width="50%" />
+<p align='center'>
+  <img src='./images/CSR.png' alt="csr" width="50%" />
+</p>
 
 <br />
 
@@ -14,7 +16,9 @@
 
 AWS의 cloudFront 와 같은 CDN 을 통해 파일을 캐시하여 server response 를 줄이는 방안 역시 유효할 수 있지만, 좀 더 효과적인 방법을 사용해보자. <br />
 
-<img src="./images/Next.js SSR.png" alt="ssr" width="50%" />
+<p align='center'>
+  <img src="./images/Next.js SSR.png" alt="ssr" width="50%" />
+</p>
 
 <br />
 
