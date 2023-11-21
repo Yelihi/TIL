@@ -26,7 +26,7 @@ server 는 전체 js 파일이 아니라 페이지에 필요한 만큼의 js 파
 
 hydration 과정까지 마무리된다면 이제 유저는 정상적으로 인터렉션이 가능해진다. <br />
 
-<img src="./images/ssr" alt="ssr2" width="100%" />
+<img src="./images/ssr.png" alt="ssr2" width="100%" />
 
 <br />
 
