@@ -30,77 +30,24 @@ const fs = require("fs");
 const input = fs
   .readFileSync(__dirname + "/index.txt")
   .toString()
-  .trim();
+  .trim()
+  .split(/\n/);
 
-const N = Number(input);
+const [n, arr] = input;
+const N = Number(n);
+
+const price = arr.split(" ").map((v) => Number(v));
 
 const dp = [];
-const answer = [];
-answer[0] = N;
 
-dp[0] = 0;
-dp[1] = 0;
-dp[2] = 1;
-dp[3] = 1;
+dp[0] = price[0];
 
-for (let i = 4; i <= N; i++) {
-  if (i % 3 == 0 && i % 2 == 0) {
-    dp[i] = Math.min(dp[i / 3], dp[i / 2], dp[i - 1]) + 1;
-  } else if (i % 3 == 0) {
-    dp[i] = Math.min(dp[i / 3], dp[i - 1]) + 1;
-  } else if (i % 2 == 0) {
-    dp[i] = Math.min(dp[i / 2], dp[i - 1]) + 1;
-  } else {
-    dp[i] = dp[i - 1] + 1;
+for (let i = 1; i < N; i++) {
+  let summary = Number.MIN_SAFE_INTEGER;
+  for (let j = i - 1; j >= 0; j--) {
+    summary = Math.max(summary, dp[j] + price[i - 1 - j]);
   }
+  dp[i] = Math.max(price[i], summary);
 }
 
-let backTrack = N;
-
-while (backTrack !== 1) {
-  const map = new Map();
-  if (backTrack % 3 == 0 && backTrack % 2 == 0) {
-    map.set(backTrack / 3, dp[backTrack / 3]);
-    map.set(backTrack / 2, dp[backTrack / 2]);
-    map.set(backTrack - 1, dp[backTrack - 1]);
-    const min = Math.min(
-      map.get(backTrack / 3),
-      map.get(backTrack / 2),
-      map.get(backTrack - 1)
-    );
-    for (const [key, value] of map.entries()) {
-      if (value === min) {
-        answer.push(key);
-        backTrack = key;
-        break;
-      }
-    }
-  } else if (backTrack % 3 == 0) {
-    map.set(backTrack / 3, dp[backTrack / 3]);
-    map.set(backTrack - 1, dp[backTrack - 1]);
-    const min = Math.min(map.get(backTrack / 3), map.get(backTrack - 1));
-    for (const [key, value] of map.entries()) {
-      if (value === min) {
-        answer.push(key);
-        backTrack = key;
-        break;
-      }
-    }
-  } else if (backTrack % 2 == 0) {
-    map.set(backTrack / 2, dp[backTrack / 2]);
-    map.set(backTrack - 1, dp[backTrack - 1]);
-    const min = Math.min(map.get(backTrack / 2), map.get(backTrack - 1));
-    for (const [key, value] of map.entries()) {
-      if (value === min) {
-        answer.push(key);
-        backTrack = key;
-        break;
-      }
-    }
-  } else {
-    answer.push(backTrack - 1);
-    backTrack = backTrack - 1;
-  }
-}
-
-console.log(answer);
+console.log(dp[N - 1]);
