@@ -30,24 +30,25 @@ const fs = require("fs");
 const input = fs
   .readFileSync(__dirname + "/index.txt")
   .toString()
-  .trim()
-  .split(/\n/);
+  .trim();
 
-const [n, arr] = input;
-const N = Number(n);
+const N = Number(input);
+const mod = 1000000000;
 
-const price = arr.split(" ").map((v) => Number(v));
-
-const dp = [];
-
-dp[0] = price[0];
+const dp = new Array(10).fill(1);
+dp[0] = 0;
 
 for (let i = 1; i < N; i++) {
-  let summary = Number.MIN_SAFE_INTEGER;
-  for (let j = i - 1; j >= 0; j--) {
-    summary = Math.max(summary, dp[j] + price[i - 1 - j]);
+  const copyDp = [...dp];
+  for (let j = 0; j < 10; j++) {
+    if (j == 0) {
+      dp[j] = copyDp[1] % mod;
+    } else if (j === 9) {
+      dp[j] = copyDp[8] % mod;
+    } else {
+      dp[j] = (copyDp[j - 1] + copyDp[j + 1]) % mod;
+    }
   }
-  dp[i] = Math.max(price[i], summary);
 }
 
-console.log(dp[N - 1]);
+console.log(dp.reduce((a, b) => (a + b) % mod, 0));
