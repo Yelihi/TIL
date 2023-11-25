@@ -33,22 +33,22 @@ const input = fs
   .trim();
 
 const N = Number(input);
-const mod = 1000000000;
 
 const dp = new Array(10).fill(1);
-dp[0] = 0;
 
-for (let i = 1; i < N; i++) {
+function sum(arr, idx) {
+  let sum = 0;
+  for (let i = idx; i >= 0; i--) {
+    sum += arr[i];
+  }
+  return sum;
+}
+
+for (let i = 1; i <= N; i++) {
   const copyDp = [...dp];
-  for (let j = 0; j < 10; j++) {
-    if (j == 0) {
-      dp[j] = copyDp[1] % mod;
-    } else if (j === 9) {
-      dp[j] = copyDp[8] % mod;
-    } else {
-      dp[j] = (copyDp[j - 1] + copyDp[j + 1]) % mod;
-    }
+  for (let j = 1; j < 10; j++) {
+    dp[j] = sum(copyDp, j) % 10007;
   }
 }
 
-console.log(dp.reduce((a, b) => (a + b) % mod, 0));
+console.log(dp[9]);
